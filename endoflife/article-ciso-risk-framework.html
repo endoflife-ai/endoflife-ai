@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Hidden Cost of Running EOL Software: A CISO's Risk Framework — endoflife.ai</title>
+  <meta name="description" content="Unsupported software is not just technical debt. It is a material security risk. Here is how to quantify it and present it to your board."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#08090c; --surface:#0f1117; --surface2:#171c26; --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12); --text:#e2e8f0; --muted:#64748b; --dim:#374151; --accent:#4ade80; --accent2:#f59e0b; --red:#f87171; --blue:#60a5fa; --serif:'Instrument Serif',Georgia,serif; --mono:'Geist Mono',monospace; }
+    html { scroll-behavior: smooth; }
+    body { background:var(--bg); color:var(--text); font-family:var(--mono); font-size:13px; line-height:1.6; min-height:100vh; }
+    body::before { content:''; position:fixed; inset:0; background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px); background-size:28px 28px; pointer-events:none; z-index:0; }
+    body::after { content:''; position:fixed; top:-20%; left:50%; transform:translateX(-50%); width:800px; height:400px; background:radial-gradient(ellipse,rgba(74,222,128,0.04) 0%,transparent 70%); pointer-events:none; z-index:0; }
+    .z1 { position:relative; z-index:1; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:0 2.5rem; height:58px; background:rgba(8,9,12,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+    .nav-brand { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+    .nav-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); animation:breathe 3s ease-in-out infinite; }
+    @keyframes breathe { 0%,100%{opacity:1;box-shadow:0 0 10px var(--accent)} 50%{opacity:0.5;box-shadow:0 0 4px var(--accent)} }
+    .nav-name { font-size:0.78rem; font-weight:500; letter-spacing:0.05em; color:var(--text); }
+    .nav-name span { color:var(--accent); }
+    .nav-back { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--text); }
+    .wrap { max-width:720px; margin:0 auto; padding:9rem 2.5rem 6rem; }
+    .article-cat { font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); display:inline-flex; align-items:center; gap:0.6rem; margin-bottom:1.5rem; padding:0.3rem 0.8rem; border:1px solid rgba(74,222,128,0.2); background:rgba(74,222,128,0.05); }
+    .article-title { font-family:var(--serif); font-size:clamp(2rem,4vw,3rem); color:#fff; line-height:1.1; margin-bottom:1.2rem; letter-spacing:-0.02em; }
+    .article-excerpt { font-size:0.95rem; color:var(--muted); line-height:1.85; max-width:600px; margin-bottom:2rem; }
+    .article-meta { display:flex; align-items:center; gap:1.5rem; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); padding-bottom:2rem; border-bottom:1px solid var(--border); margin-bottom:3rem; }
+    .meta-dot { width:3px; height:3px; border-radius:50%; background:var(--dim); }
+    .article-body { font-size:0.88rem; line-height:1.9; color:var(--text); }
+    .article-body h2 { font-family:var(--serif); font-size:1.5rem; color:#fff; margin:3rem 0 1rem; line-height:1.2; }
+    .article-body h3 { font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin:2rem 0 0.8rem; }
+    .article-body p { margin-bottom:1.4rem; }
+    .article-body strong { color:#fff; font-weight:500; }
+    .article-body em { font-style:italic; color:var(--accent2); }
+    .callout { background:var(--surface); border-left:2px solid var(--accent); padding:1.2rem 1.5rem; margin:2rem 0; font-size:0.85rem; color:var(--muted); line-height:1.8; }
+    .callout strong { color:var(--accent); }
+    .callout-red { border-left-color:var(--red); }
+    .callout-red strong { color:var(--red); }
+    .metric-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); margin:2rem 0; }
+    .metric-cell { background:var(--surface); padding:1.2rem 1.5rem; }
+    .mc-label { font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--dim); margin-bottom:0.4rem; }
+    .mc-value { font-size:1.1rem; color:var(--accent2); font-weight:500; margin-bottom:0.3rem; }
+    .mc-desc { font-size:0.72rem; color:var(--muted); line-height:1.6; }
+    .divider { height:1px; background:var(--border); margin:3rem 0; }
+    .next-article { background:var(--surface); border:1px solid var(--border); padding:1.5rem; margin-top:4rem; display:flex; justify-content:space-between; align-items:center; text-decoration:none; transition:border-color 0.2s; }
+    .next-article:hover { border-color:var(--border2); }
+    .na-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--dim); margin-bottom:0.4rem; }
+    .na-title { font-size:0.85rem; color:var(--text); }
+    .na-arrow { color:var(--accent); font-size:1.2rem; flex-shrink:0; }
+    .email-strip { background:var(--surface); border:1px solid var(--border); padding:2rem; margin-top:3rem; text-align:center; }
+    .es-title { font-family:var(--serif); font-size:1.2rem; color:#fff; margin-bottom:0.5rem; }
+    .es-sub { font-size:0.75rem; color:var(--muted); margin-bottom:1.2rem; }
+    .es-form { display:flex; max-width:400px; margin:0 auto; }
+    .es-input { flex:1; background:var(--bg); border:1px solid var(--border); border-right:none; color:var(--text); font-family:var(--mono); font-size:0.82rem; padding:0.7rem 1rem; outline:none; }
+    .es-input:focus { border-color:var(--accent); }
+    .es-btn { background:var(--accent); color:var(--bg); border:none; padding:0.7rem 1.2rem; font-family:var(--mono); font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; white-space:nowrap; }
+    .es-success { display:none; color:var(--accent); font-size:0.82rem; margin-top:0.8rem; }
+    footer { max-width:720px; margin:0 auto; padding:2rem 2.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; font-size:0.65rem; color:var(--dim); }
+    footer a { color:var(--accent); text-decoration:none; }
+    @media(max-width:600px){.metric-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<nav class="z1">
+  <a href="index.html" class="nav-brand"><div class="nav-dot"></div><span class="nav-name">endoflife<span>.ai</span></span></a>
+  <a href="index.html#resources" class="nav-back">← Resource Hub</a>
+</nav>
+<div class="wrap z1">
+  <div class="article-cat">Enterprise</div>
+  <h1 class="article-title">The Hidden Cost of Running EOL Software: A CISO's Risk Framework</h1>
+  <p class="article-excerpt">Unsupported software is not just technical debt. It is a material security risk. Here is how to quantify it and present it to your board.</p>
+  <div class="article-meta">
+    <span>Feb 2026</span><div class="meta-dot"></div><span>10 min read</span><div class="meta-dot"></div><span>Enterprise</span>
+  </div>
+  <div class="article-body">
+    <p>Every CISO knows the feeling. The board wants to know what the organization's biggest security risks are, ranked, with dollar figures attached. The security team wants to fix everything. The budget covers a fraction of that. And somewhere in the stack — usually multiple places — there is end-of-life software accumulating vulnerabilities that no patch will ever address.</p>
+    <p>The challenge isn't identifying EOL software as a risk. Most security teams know it's a problem. The challenge is communicating it in terms that move budget, and managing it in a way that reduces exposure while migration projects grind forward. This framework addresses both.</p>
+
+    <h2>Why EOL Software Is a Balance Sheet Risk</h2>
+    <p>The traditional framing of EOL software is operational — old software that needs to be updated. That framing undersells the risk and fails to communicate urgency to non-technical stakeholders. The accurate framing is financial: EOL software is an unhedged liability that grows over time with no natural ceiling.</p>
+    <p>Every day a system runs on EOL software, the probability of a security incident involving that system increases. Incidents have costs — incident response, forensics, breach notification, regulatory penalties, litigation, reputational damage, and business interruption. These costs are estimable. Probability of incident multiplied by cost of incident produces a risk-adjusted expected loss figure that belongs in the same board conversation as insurance premiums, legal reserves, and credit risk.</p>
+
+    <div class="callout callout-red">
+      <strong>The key distinction:</strong> Standard vulnerabilities have a patch. The expected loss decreases after remediation. EOL vulnerabilities have no patch. The expected loss only increases — more CVEs disclosed, more exploit tooling available, more time for attackers to weaponize. It is an open-ended liability.
+    </div>
+
+    <h2>The Four Cost Categories</h2>
+    <p>When quantifying EOL software risk for board presentation, organize costs into four buckets.</p>
+
+    <div class="metric-grid">
+      <div class="metric-cell">
+        <div class="mc-label">Direct Breach Cost</div>
+        <div class="mc-value">$4.9M</div>
+        <div class="mc-desc">Average total cost of a data breach in 2025 (IBM Cost of a Data Breach Report). EOL software as initial attack vector correlates with higher-than-average costs due to delayed detection.</div>
+      </div>
+      <div class="metric-cell">
+        <div class="mc-label">Regulatory Exposure</div>
+        <div class="mc-value">Variable</div>
+        <div class="mc-desc">GDPR fines up to 4% of global revenue. HIPAA penalties up to $1.9M per violation category per year. SEC cybersecurity disclosure rules create additional liability for public companies.</div>
+      </div>
+      <div class="metric-cell">
+        <div class="mc-label">Operational Disruption</div>
+        <div class="mc-value">$9,000/min</div>
+        <div class="mc-desc">Average cost of IT downtime across industries. Ransomware incidents originating from EOL attack vectors average 21 days of operational disruption.</div>
+      </div>
+      <div class="metric-cell">
+        <div class="mc-label">Cyber Insurance Impact</div>
+        <div class="mc-value">Coverage risk</div>
+        <div class="mc-desc">Insurers are increasingly excluding or sublimiting coverage for incidents involving EOL software. Undisclosed EOL exposure can void claims entirely under material misrepresentation clauses.</div>
+      </div>
+    </div>
+
+    <h2>Building the EOL Risk Register</h2>
+    <p>A board-ready EOL risk presentation starts with a structured risk register. For each EOL system in the environment, document the following fields.</p>
+
+    <h3>System Identification</h3>
+    <p>Name, version, vendor, and the date the system reached end of life. Include the number of days since EOL — this communicates the duration of accumulated exposure in a way that a date alone does not. A system that went EOL three years ago carries significantly more unpatched CVE exposure than one that went EOL last month.</p>
+
+    <h3>CVE Exposure Count</h3>
+    <p>Query the NVD for CVEs affecting this product version disclosed after the EOL date. Count them. Count the subset with CVSS scores of 7.0 or higher. Count the subset appearing in CISA's Known Exploited Vulnerabilities catalog. These three numbers — total post-EOL CVEs, high/critical CVEs, actively exploited CVEs — tell the story of accumulated exposure in concrete terms.</p>
+
+    <h3>Business Context</h3>
+    <p>What data does this system access? What network segments can it reach? What business processes depend on it? A high CVE count on an air-gapped, low-privilege system is a different risk than the same CVE count on an internet-facing system with access to customer PII and financial data. The business context determines the blast radius of a successful exploit.</p>
+
+    <h3>Migration Status</h3>
+    <p>Is there a migration project underway? What is the estimated completion date? Who owns it? Is there a compensating control in place in the interim? This column transforms the risk register from a list of problems into a managed portfolio — each item has an owner, a timeline, and a control status.</p>
+
+    <h2>Presenting to the Board</h2>
+    <p>Board members are not security experts. They are risk managers. The presentation that moves budget is the one that speaks their language: financial exposure, probability, timeline, and cost of remediation versus cost of inaction.</p>
+    <p><strong>Lead with the expected loss figure.</strong> Take your highest-exposure EOL systems, estimate the probability of incident in the next 12 months based on CVE exploitation rates, multiply by the estimated incident cost for a system of that type, and present the sum. This is the annualized expected loss from your EOL exposure. It belongs on slide one.</p>
+    <p><strong>Show the trend.</strong> EOL exposure is not static. Show the board the CVE accumulation curve — how many new vulnerabilities have been disclosed against your EOL systems in the past 12 months with no corresponding patch. A line that goes up and to the right with no remediation path is a compelling visual argument for migration budget.</p>
+    <p><strong>Quantify the insurance risk.</strong> If your cyber insurance policy contains EOL exclusions or sublimits, quantify the coverage gap. A board that understands it may be holding a policy that won't pay for the most likely type of incident is a board that approves migration budgets.</p>
+
+    <div class="callout">
+      <strong>Framing that works:</strong> "We are currently running 14 systems on end-of-life software. These systems have accumulated 312 unpatched CVEs since their support ended, 47 of which are rated critical and 8 of which are actively exploited in the wild. Our estimated annualized expected loss from this exposure is $2.1M. The cost to migrate the three highest-risk systems is $380,000. We are asking for that budget."
+    </div>
+
+    <h2>Compensating Controls While You Migrate</h2>
+    <p>Migration takes time. In the interim, compensating controls reduce exposure without eliminating it. Document these controls in your risk register alongside each EOL system — they demonstrate due diligence and reduce the blast radius of a potential incident.</p>
+    <p><strong>Network segmentation.</strong> Isolate EOL systems from the broader network. Limit inbound and outbound connections to the minimum required for business function. An EOL system that cannot reach the internet and cannot be reached from general employee workstations has a significantly reduced attack surface.</p>
+    <p><strong>Enhanced monitoring.</strong> Deploy additional logging and alerting on EOL systems. Known exploits for EOL CVEs have documented indicators of compromise — tune your SIEM to detect them specifically. The goal is to compress detection time, which directly reduces incident cost.</p>
+    <p><strong>Access restriction.</strong> Apply least-privilege principles aggressively to EOL systems. Reduce the number of accounts with access. Remove administrative credentials that aren't actively needed. Limit what data the system can access and export.</p>
+    <p><strong>Vulnerability scanning frequency.</strong> Scan EOL systems more frequently than supported systems. New CVEs are being disclosed constantly. While you cannot patch them, knowing about them immediately allows you to assess whether a compensating control adjustment is needed.</p>
+
+    <h2>The CISO's Accountability Position</h2>
+    <p>One dimension of EOL software risk that doesn't appear in most frameworks is the personal accountability dimension for security leaders. Regulators, litigators, and cyber insurers are increasingly asking whether the CISO knew about EOL exposure and what they did about it.</p>
+    <p>Knowing about it and documenting a managed response — risk register, migration roadmap, compensating controls, board communication — is a defensible position. Knowing about it and doing nothing is not. The framework described in this article is also a documentation framework. Every step creates a record that demonstrates the risk was identified, assessed, communicated, and actively managed.</p>
+    <p>That record doesn't prevent incidents. But in the aftermath of one, it is the difference between a CISO who managed a known risk responsibly and one who ignored it.</p>
+
+    <div class="divider"></div>
+    <p>EOL software is not a new problem. What is new is the regulatory environment, the insurance landscape, and the board-level scrutiny that makes it impossible to treat as a backlog item. The organizations that build a formal EOL risk management practice — inventory, quantification, migration roadmap, compensating controls, board reporting — will be better positioned on every dimension: security posture, insurance coverage, regulatory standing, and post-incident liability. Start with the inventory. Everything else follows from knowing what you're actually running.</p>
+  </div>
+
+  <a href="article-eosl-hardware.html" class="next-article z1">
+    <div><div class="na-label">Next Article</div><div class="na-title">EOSL for Enterprise Hardware: Cisco, HPE, Dell EMC Timelines</div></div>
+    <div class="na-arrow">→</div>
+  </a>
+  <div class="email-strip z1">
+    <div class="es-title">The monthly EOL digest</div>
+    <p class="es-sub">Once a month — critical end-of-life dates, CVE blind spots, and lifecycle changes worth knowing about.</p>
+    <div class="es-form" id="esForm">
+      <input type="email" class="es-input" id="esInput" placeholder="you@company.com"/>
+      <button class="es-btn" onclick="esSubmit()">Subscribe →</button>
+    </div>
+    <div class="es-success" id="esSuccess">You're on the list.</div>
+  </div>
+</div>
+<footer class="z1"><span>© 2026 endoflife.ai</span><a href="index.html">← Back to Platform</a></footer>
+<script>
+async function esSubmit() {
+  const email = document.getElementById('esInput').value.trim();
+  if (!email || !email.includes('@')) return;
+  try { await fetch('https://api.beehiiv.com/v2/publications/pub_d4d2b728-6bf7-421b-b887-6751e8dce7fe/subscriptions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,reactivate_existing:true,send_welcome_email:true})}); } catch(e) {}
+  document.getElementById('esForm').style.display='none';
+  document.getElementById('esSuccess').style.display='block';
+}
+document.getElementById('esInput').addEventListener('keydown',e=>{if(e.key==='Enter')esSubmit();});
+</script>
+</body>
+</html>

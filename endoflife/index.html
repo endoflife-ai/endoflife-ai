@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>endoflife.ai — Software Lifecycle Intelligence</title>
+  <meta name="description" content="The definitive resource for software end-of-life dates, CVE blind spot detection, and lifecycle intelligence across 454+ products."/>
+  <meta name="keywords" content="end of life software, EOL dates, software lifecycle, CVE security, end of support"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #08090c;
+      --surface: #0f1117;
+      --surface2: #171c26;
+      --border: rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.12);
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --dim: #374151;
+      --accent: #4ade80;
+      --accent2: #f59e0b;
+      --red: #f87171;
+      --blue: #60a5fa;
+      --serif: 'Instrument Serif', Georgia, serif;
+      --mono: 'Geist Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 100vh;
+      cursor: default;
+    }
+
+    /* Dot grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Ambient glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(74,222,128,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .z1 { position: relative; z-index: 1; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2.5rem;
+      height: 58px;
+      background: rgba(8,9,12,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      text-decoration: none;
+    }
+
+    .nav-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: breathe 3s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%,100% { opacity:1; box-shadow: 0 0 10px var(--accent); }
+      50% { opacity:0.5; box-shadow: 0 0 4px var(--accent); }
+    }
+
+    .nav-name {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--text);
+    }
+
+    .nav-name span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 0.45rem 1.1rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    #home {
+      padding: 9rem 2.5rem 6rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid rgba(74,222,128,0.2);
+      background: rgba(74,222,128,0.05);
+      animation: fadeUp 0.6s both;
+    }
+
+    .hero-kicker::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 2rem;
+      max-width: 800px;
+      animation: fadeUp 0.7s 0.1s both;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-title .strike {
+      position: relative;
+      color: var(--muted);
+    }
+
+    .hero-title .strike::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      top: 50%;
+      height: 2px;
+      background: var(--red);
+      transform: rotate(-1deg);
+    }
+
+    .hero-body {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.85;
+      margin-bottom: 3rem;
+      animation: fadeUp 0.7s 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 4rem;
+      animation: fadeUp 0.7s 0.3s both;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 0.85rem 2rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border2);
+      padding: 0.85rem 2rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      display: inline-block;
+    }
+
+    .btn-ghost:hover { border-color: var(--text); }
+
+    /* Hero stats */
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.7s 0.4s both;
+    }
+
+    .stat { display: flex; flex-direction: column; gap: 0.3rem; }
+
+    .stat-num {
+      font-family: var(--serif);
+      font-size: 2.2rem;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      overflow: hidden;
+      padding: 0.7rem 0;
+    }
+
+    .ticker {
+      display: flex;
+      gap: 3rem;
+      animation: ticker 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .ticker-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .ticker-eol { color: var(--red); }
+    .ticker-warn { color: var(--accent2); }
+    .ticker-ok { color: var(--accent); }
+
+    /* ── TOOL SECTION ── */
+    #tool {
+      padding: 6rem 2.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-tag::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 0.8rem;
+    }
+
+    .section-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 540px;
+      line-height: 1.8;
+      margin-bottom: 3rem;
+    }
+
+    /* Mini tool preview */
+    .tool-preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .tool-bar {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 0.7rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tb-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+    .tool-search {
+      display: flex;
+      padding: 1.5rem;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tool-search-prefix {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-right: none;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-style: italic;
+    }
+
+    .tool-search-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      padding: 0.75rem 1rem;
+      outline: none;
+    }
+
+    .tool-search-btn {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 0 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .tool-results {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin: 1.5rem;
+    }
+
+    .tool-result-cell {
+      background: var(--bg);
+      padding: 1.2rem;
+    }
+
+    .trc-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 0.4rem;
+    }
+
+    .trc-value {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .trc-red { color: var(--red); }
+    .trc-yellow { color: var(--accent2); }
+    .trc-green { color: var(--accent); }
+
+    .tool-cve {
+      margin: 0 1.5rem 1.5rem;
+      padding: 1rem 1.2rem;
+      background: rgba(248,113,113,0.06);
+      border-left: 3px solid var(--red);
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+    }
+
+    .tool-cve-icon { color: var(--red); font-size: 1rem; flex-shrink: 0; }
+
+    .tool-cve-text {
+      font-size: 0.75rem;
+      color: #c9a0a0;
+      line-height: 1.7;
+    }
+
+    .tool-link {
+      display: block;
+      text-align: center;
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .tool-link:hover { background: rgba(74,222,128,0.05); }
+
+    /* ── WHY SECTION ── */
+    #why {
+      padding: 6rem 2.5rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .why-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .why-point {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .why-point:last-child { border-bottom: none; }
+
+    .wp-num {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 0.5rem;
+    }
+
+    .wp-title {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .wp-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    /* Attack chain diagram */
+    .attack-chain {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 2rem;
+    }
+
+    .ac-title {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ac-title::before {
+      content: '';
+      width: 16px; height: 1px;
+      background: var(--red);
+    }
+
+    .ac-step {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .ac-step:last-child { border-bottom: none; }
+
+    .ac-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 500;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .ac-num-bad { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+    .ac-num-good { background: rgba(74,222,128,0.12); color: var(--accent); border: 1px solid rgba(74,222,128,0.3); }
+
+    .ac-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .ac-label strong { color: var(--text); }
+    .ac-label .bad { color: var(--red); }
+    .ac-label .good { color: var(--accent); }
+
+    /* ── RESOURCES ── */
+    #resources {
+      padding: 6rem 2.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .resource-card {
+      background: var(--bg);
+      padding: 1.8rem;
+      transition: background 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+    }
+
+    .resource-card:hover { background: var(--surface); }
+
+    .rc-cat {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+
+    .rc-title {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      color: #fff;
+      line-height: 1.4;
+      margin-bottom: 0.6rem;
+    }
+
+    .rc-excerpt {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+
+    .rc-meta {
+      font-size: 0.62rem;
+      color: var(--dim);
+      display: flex;
+      justify-content: space-between;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .rc-read { color: var(--accent); }
+
+    /* ── EMAIL CAPTURE ── */
+    .email-section {
+      padding: 5rem 2.5rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .email-inner {
+      max-width: 580px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .email-title {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      color: #fff;
+      margin-bottom: 0.8rem;
+      line-height: 1.2;
+    }
+
+    .email-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .email-form {
+      display: flex;
+      gap: 0;
+      max-width: 440px;
+      margin: 0 auto 0.8rem;
+    }
+
+    .email-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      padding: 0.8rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .email-input:focus { border-color: var(--accent); }
+    .email-input::placeholder { color: var(--dim); }
+
+    .email-btn {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 0 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    .email-btn:hover { opacity: 0.85; }
+
+    .email-note {
+      font-size: 0.65rem;
+      color: var(--dim);
+      letter-spacing: 0.05em;
+    }
+
+    .email-success {
+      display: none;
+      color: var(--accent);
+      font-size: 0.82rem;
+      padding: 1rem;
+      border: 1px solid rgba(74,222,128,0.2);
+      background: rgba(74,222,128,0.05);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 2.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 3rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-brand { display: flex; flex-direction: column; gap: 0.8rem; }
+
+    .footer-logo {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .footer-logo span { color: var(--accent); }
+
+    .footer-desc {
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 220px;
+    }
+
+    .footer-col h4 {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 1rem;
+    }
+
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .footer-col a {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover { color: var(--text); }
+
+    .footer-bottom {
+      padding: 1.5rem 2.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      font-size: 0.65rem;
+      color: var(--dim);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .why-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .resources-grid { grid-template-columns: 1fr; }
+      footer { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-stats { gap: 1.5rem; }
+      .tool-results { grid-template-columns: 1fr 1fr; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="z1">
+  <a href="#home" class="nav-brand">
+    <div class="nav-dot"></div>
+    <span class="nav-name">endoflife<span>.ai</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#tool">EOL Checker</a></li>
+    <li><a href="#why">CVE Intelligence</a></li>
+    <li><a href="#resources">Resources</a></li>
+    <li><a href="partners.html">Partner</a></li>
+  </ul>
+  <a href="checker.html" class="nav-cta">Check a Product →</a>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="z1">
+  <div class="hero-kicker">Software Lifecycle Intelligence</div>
+  <h1 class="hero-title">
+    Know when your software<br>
+    <em>stops being safe.</em>
+  </h1>
+  <p class="hero-body">
+    End-of-life software doesn't just stop receiving features — it becomes a hidden liability. endoflife.ai tracks lifecycle data for 454+ products and surfaces the CVE blind spots your scanner is missing.
+  </p>
+  <div class="hero-actions">
+    <a href="checker.html" class="btn-primary">Check Your Stack →</a>
+    <a href="#why" class="btn-ghost">The CVE Blind Spot</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">454+</div>
+      <div class="stat-label">Products Tracked</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">90%</div>
+      <div class="stat-label">Of Breaches Exploit Known Vulns</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">&lt;7</div>
+      <div class="stat-label">Days to Exploit a New CVE</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">$0</div>
+      <div class="stat-label">Cost to Check</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap z1">
+  <div class="ticker">
+    <!-- Duplicated for seamless loop -->
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">Windows 10 — EOL Oct 2025</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">CentOS 7 — EOL Jun 2024</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">AngularJS — EOL Dec 2021</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">MySQL 5.7 — EOL Oct 2023</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">PHP 8.1 — EOL Dec 2024</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent2)"></span><span class="ticker-warn">Node.js 20 — EOL Apr 2026</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent2)"></span><span class="ticker-warn">MySQL 8.0 — EOL Apr 2026</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent2)"></span><span class="ticker-warn">Vue 2 — EOL Dec 2023</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent)"></span><span class="ticker-ok">Python 3.13 — Supported</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent)"></span><span class="ticker-ok">Node.js 22 LTS — Supported</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent)"></span><span class="ticker-ok">PostgreSQL 17 — Supported</span></span>
+    <!-- duplicate -->
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">Windows 10 — EOL Oct 2025</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">CentOS 7 — EOL Jun 2024</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">AngularJS — EOL Dec 2021</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">MySQL 5.7 — EOL Oct 2023</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--red)"></span><span class="ticker-eol">PHP 8.1 — EOL Dec 2024</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent2)"></span><span class="ticker-warn">Node.js 20 — EOL Apr 2026</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent2)"></span><span class="ticker-warn">MySQL 8.0 — EOL Apr 2026</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent2)"></span><span class="ticker-warn">Vue 2 — EOL Dec 2023</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent)"></span><span class="ticker-ok">Python 3.13 — Supported</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent)"></span><span class="ticker-ok">Node.js 22 LTS — Supported</span></span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent)"></span><span class="ticker-ok">PostgreSQL 17 — Supported</span></span>
+  </div>
+</div>
+
+<!-- TOOL PREVIEW -->
+<section id="tool" class="z1">
+  <div class="section-tag">Free Tool</div>
+  <h2 class="section-title">The EOL Checker</h2>
+  <p class="section-sub">Instant lifecycle status for any software product. Paste in a product name and know your risk in seconds.</p>
+
+  <div class="tool-preview">
+    <div class="tool-bar">
+      <div class="tb-dot" style="background:#f87171"></div>
+      <div class="tb-dot" style="background:#fbbf24"></div>
+      <div class="tb-dot" style="background:#4ade80"></div>
+    </div>
+    <div class="tool-search">
+      <div class="tool-search-prefix">$ eol check</div>
+      <input type="text" class="tool-search-input" id="previewInput" placeholder="Try: windows-10, mysql, angularjs..." autocomplete="off" spellcheck="false"/>
+      <button class="tool-search-btn" onclick="window.location.href='checker.html'">Check →</button>
+    </div>
+    <div class="tool-results" id="previewResults">
+      <div class="tool-result-cell">
+        <div class="trc-label">Product</div>
+        <div class="trc-value" style="color:#fff">Windows 10</div>
+      </div>
+      <div class="tool-result-cell">
+        <div class="trc-label">EOL Date</div>
+        <div class="trc-value trc-red">Oct 14, 2025</div>
+      </div>
+      <div class="tool-result-cell">
+        <div class="trc-label">Status</div>
+        <div class="trc-value trc-red">End of Life</div>
+      </div>
+    </div>
+    <div class="tool-cve">
+      <div class="tool-cve-icon">☠</div>
+      <div class="tool-cve-text"><strong style="color:var(--text)">CVE Blind Spot Detected.</strong> This product no longer receives security patches. Attackers diff new CVE fixes against your EOL build — your scanner won't alert you. <strong style="color:var(--red)">They know. You don't.</strong></div>
+    </div>
+    <a href="checker.html" class="tool-link">Open Full EOL Checker — 454+ products →</a>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="why-inner z1">
+    <div class="why-grid">
+      <div>
+        <div class="section-tag">The Problem</div>
+        <h2 class="section-title">Your scanner has a<br><em>blind spot.</em></h2>
+        <p class="section-sub">CVE reporters only test supported software. When a vulnerability is discovered in code that also exists in your EOL version, they don't check — and neither does your scanner.</p>
+
+        <div style="margin-top:2rem">
+          <div class="why-point">
+            <div class="wp-num">01</div>
+            <div class="wp-title">Incomplete CVE Reporting</div>
+            <p class="wp-text">Security researchers report vulnerabilities in supported versions only. EOL versions share the same vulnerable code but never appear in the advisory.</p>
+          </div>
+          <div class="why-point">
+            <div class="wp-num">02</div>
+            <div class="wp-title">False Scanner Confidence</div>
+            <p class="wp-text">Your vulnerability scanner checks CVE affected version ranges. Your EOL version falls outside that range. No alert fires. You believe you're safe.</p>
+          </div>
+          <div class="why-point">
+            <div class="wp-num">03</div>
+            <div class="wp-title">Attackers Know First</div>
+            <p class="wp-text">Threat actors read advisories and diff patches. They test EOL builds systematically. This isn't a zero-day — it's worse. They know. You don't.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="attack-chain">
+          <div class="ac-title">Attack Chain — EOL Software</div>
+          <div class="ac-step">
+            <div class="ac-num ac-num-bad">1</div>
+            <div class="ac-label"><strong>CVE Published</strong><br>Vulnerability disclosed in supported versions only. Your EOL build has the same code.</div>
+          </div>
+          <div class="ac-step">
+            <div class="ac-num ac-num-bad">2</div>
+            <div class="ac-label"><strong>Attacker reads the advisory</strong><br><span class="bad">Diffs the patch. Tests against EOL builds. Confirms vulnerability present.</span></div>
+          </div>
+          <div class="ac-step">
+            <div class="ac-num ac-num-bad">3</div>
+            <div class="ac-label"><strong>Your scanner runs</strong><br>Checks CVE affected version range. EOL version not listed. <span class="bad">No alert fires.</span></div>
+          </div>
+          <div class="ac-step">
+            <div class="ac-num ac-num-bad">4</div>
+            <div class="ac-label"><strong>You believe you're clean</strong><br><span class="bad">Dashboard shows green. Breach window is open.</span></div>
+          </div>
+          <div class="ac-step">
+            <div class="ac-num ac-num-good">✓</div>
+            <div class="ac-label"><strong>endoflife.ai flags it first</strong><br><span class="good">EOL detected. CVE blind spot warning surfaced. Risk known before attacker acts.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section id="resources" class="z1">
+  <div class="section-tag">Resource Hub</div>
+  <h2 class="section-title">Lifecycle Intelligence</h2>
+  <p class="section-sub">Guides, timelines, and analysis for security and engineering teams managing software lifecycles.</p>
+
+  <div class="resources-grid">
+    <a href="article-cve-blind-spot.html" class="resource-card">
+      <div class="rc-cat">Security</div>
+      <div class="rc-title">The CVE Blind Spot: Why EOL Software Is More Dangerous Than a Zero-Day</div>
+      <div class="rc-excerpt">With a zero-day, nobody knows. With EOL software, the attacker knows and you don't. Here's why that asymmetry is the most dangerous gap in enterprise security.</div>
+      <div class="rc-meta"><span>May 2026 · 8 min</span><span class="rc-read">Read →</span></div>
+    </a>
+    <a href="article-windows10-eol.html" class="resource-card">
+      <div class="rc-cat">IT Security</div>
+      <div class="rc-title">Windows 10 End of Life: The Complete Migration Guide for IT Teams</div>
+      <div class="rc-excerpt">Windows 10 reached EOL October 14, 2025. Millions of enterprise machines are running unpatched. Here is what you need to do now.</div>
+      <div class="rc-meta"><span>Apr 2026 · 9 min</span><span class="rc-read">Read →</span></div>
+    </a>
+    <a href="article-eol-calendar-2026.html" class="resource-card">
+      <div class="rc-cat">Open Source</div>
+      <div class="rc-title">The 2026 EOL Calendar: Every Major Runtime and Framework</div>
+      <div class="rc-excerpt">Python, Node.js, PHP, Ruby, Java LTS — every major platform support window in one place, updated quarterly.</div>
+      <div class="rc-meta"><span>May 2026 · 5 min</span><span class="rc-read">Read →</span></div>
+    </a>
+    <a href="article-ciso-risk-framework.html" class="resource-card">
+      <div class="rc-cat">Enterprise</div>
+      <div class="rc-title">The Hidden Cost of Running EOL Software: A CISO's Risk Framework</div>
+      <div class="rc-excerpt">Unsupported software is not just technical debt. It is a material security risk. Here is how to quantify it and present it to your board.</div>
+      <div class="rc-meta"><span>Feb 2026 · 10 min</span><span class="rc-read">Read →</span></div>
+    </a>
+    <a href="article-ciso-risk-framework.html" class="resource-card">
+      <div class="rc-cat">Enterprise</div>
+      <div class="rc-title">The Hidden Cost of Running EOL Software: A CISO's Risk Framework</div>
+      <div class="rc-excerpt">Unsupported software is not just technical debt. It is a material security risk. Here is how to quantify it and present it to your board.</div>
+      <div class="rc-meta"><span>Feb 2026 · 10 min</span><span class="rc-read">Read →</span></div>
+    </a>
+    <a href="article-eosl-hardware.html" class="resource-card">
+      <div class="rc-cat">Hardware</div>
+      <div class="rc-title">EOSL for Enterprise Hardware: Cisco, HPE, Dell EMC Timelines</div>
+      <div class="rc-excerpt">When your storage arrays and network gear hit end-of-service-life, the security clock starts. A vendor-by-vendor breakdown of critical dates.</div>
+      <div class="rc-meta"><span>Apr 2026 · 7 min</span><span class="rc-read">Read →</span></div>
+    </a>
+  </div>
+</section>
+
+<!-- EMAIL CAPTURE -->
+<div class="email-section z1">
+  <div class="email-inner">
+    <h2 class="email-title">The monthly EOL digest</h2>
+    <p class="email-sub">Once a month — the most critical end-of-life dates, CVE blind spots, and lifecycle changes worth knowing about. Our AI scrapes the web, monitors endoflife.date, and compiles what matters. You get the signal, not the noise.</p>
+    <div class="email-form" id="emailForm">
+      <input type="email" class="email-input" id="emailInput" placeholder="you@company.com"/>
+      <button class="email-btn" onclick="submitEmail()">Subscribe →</button>
+    </div>
+    <div class="email-success" id="emailSuccess">✓ You are on the list. First digest lands next month.</div>
+    <div class="email-note">Monthly cadence. AI-curated, human-reviewed. Unsubscribe anytime.</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="z1">
+  <div class="footer-brand">
+    <div class="footer-logo">endoflife<span>.ai</span></div>
+    <div class="footer-desc">The definitive resource for software lifecycle intelligence and CVE blind spot detection.</div>
+  </div>
+  <div class="footer-col">
+    <h4>Platform</h4>
+    <ul>
+      <li><a href="checker.html">EOL Checker</a></li>
+      <li><a href="#resources">Resource Hub</a></li>
+      <li><a href="#why">CVE Intelligence</a></li>
+      <li><a href="partners.html">Partner with Us</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Data</h4>
+    <ul>
+      <li><a href="https://endoflife.date" target="_blank">endoflife.date</a></li>
+      <li><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">CISA KEV Catalog</a></li>
+      <li><a href="https://nvd.nist.gov" target="_blank">NIST NVD</a></li>
+    </ul>
+  </div>
+</footer>
+
+<div class="footer-bottom z1">
+  <span>© 2026 endoflife.ai — Software Lifecycle Intelligence</span>
+  <span>Data: <a href="https://endoflife.date" target="_blank" style="color:var(--accent);text-decoration:none">endoflife.date</a> · MIT License</span>
+</div>
+
+<script>
+  // Redirect tool preview input to checker
+  document.getElementById('previewInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const q = this.value.trim();
+      if (q) window.location.href = 'checker.html?q=' + encodeURIComponent(q);
+    }
+  });
+
+  // Email signup — Beehiiv
+  async function submitEmail() {
+    const email = document.getElementById('emailInput').value.trim();
+    if (!email || !email.includes('@')) return;
+    const btn = document.querySelector('.email-btn');
+    btn.textContent = 'Subscribing...';
+    btn.disabled = true;
+    try {
+      await fetch('https://api.beehiiv.com/v2/publications/pub_d4d2b728-6bf7-421b-b887-6751e8dce7fe/subscriptions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, reactivate_existing: true, send_welcome_email: true })
+      });
+    } catch(e) {}
+    document.getElementById('emailForm').style.display = 'none';
+    document.getElementById('emailSuccess').style.display = 'block';
+  }
+
+  document.getElementById('emailInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitEmail();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EOL Checker — endoflife.ai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#06080b; --panel:#0d1117; --panel2:#161b22; --border:rgba(255,255,255,0.08);
+      --text:#cdd9e5; --muted:#768390; --dim:#444c56;
+      --green:#56d364; --yellow:#e3b341; --red:#f85149; --blue:#58a6ff; --purple:#bc8cff;
+      --mono:'Space Mono',monospace; --sans:'Syne',sans-serif;
+    }
+    body { background:var(--bg); color:var(--text); font-family:var(--mono); font-size:13px; line-height:1.6; min-height:100vh; }
+    body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(88,166,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(88,166,255,0.03) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+    .wrap { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:3rem 1.5rem 6rem; }
+    header { margin-bottom:3rem; }
+    .logo { font-family:var(--sans); font-size:0.7rem; font-weight:600; letter-spacing:0.25em; text-transform:uppercase; color:var(--blue); display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem; }
+    .logo::before { content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse 2s ease-in-out infinite; }
+    .logo a { color:var(--blue); text-decoration:none; }
+    @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 8px var(--green)} 50%{opacity:0.5;box-shadow:0 0 3px var(--green)} }
+    .hero-title { font-family:var(--sans); font-size:clamp(2rem,5vw,3.2rem); font-weight:800; line-height:1.05; letter-spacing:-0.03em; color:#fff; }
+    .hero-title span { color:var(--yellow); }
+    .hero-sub { font-size:0.8rem; color:var(--muted); margin-top:0.5rem; max-width:560px; line-height:1.7; }
+    .data-sources { display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem; }
+    .source-tag { font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.25rem 0.7rem; border:1px solid var(--border); color:var(--muted); display:flex; align-items:center; gap:0.4rem; }
+    .source-tag .dot { width:5px; height:5px; border-radius:50%; }
+    .mode-row { display:flex; gap:0.5rem; margin-bottom:1.5rem; align-items:center; flex-wrap:wrap; }
+    .mode-label { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-right:0.5rem; }
+    .mode-btn { font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; font-family:var(--mono); padding:0.3rem 0.8rem; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+    .mode-btn.active { background:var(--panel2); border-color:var(--blue); color:var(--blue); }
+    .search-block { background:var(--panel); border:1px solid var(--border); padding:1.5rem; margin-bottom:1rem; }
+    .search-label { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:0.8rem; }
+    .search-row { display:flex; }
+    .search-prompt { background:var(--panel2); border:1px solid var(--border); border-right:none; padding:0 1rem; display:flex; align-items:center; color:var(--green); font-size:0.85rem; white-space:nowrap; font-style:italic; }
+    .search-input { flex:1; background:var(--bg); border:1px solid var(--border); color:var(--text); font-family:var(--mono); font-size:0.9rem; padding:0.85rem 1rem; outline:none; transition:border-color 0.2s; min-width:0; }
+    .search-input:focus { border-color:var(--blue); }
+    .search-input::placeholder { color:var(--dim); }
+    .search-btn { background:var(--blue); color:var(--bg); border:none; padding:0 1.5rem; font-family:var(--sans); font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:opacity 0.2s; white-space:nowrap; flex-shrink:0; }
+    .search-btn:hover { opacity:0.82; }
+    .chips { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1rem; align-items:center; }
+    .chips-label { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); }
+    .chip { font-size:0.7rem; color:var(--muted); border:1px solid var(--border); padding:0.22rem 0.7rem; cursor:pointer; transition:all 0.15s; font-family:var(--mono); }
+    .chip:hover { color:var(--blue); border-color:var(--blue); background:rgba(88,166,255,0.06); }
+    #compareInputs { display:none; margin-bottom:1rem; }
+    #compareInputs .search-block { margin-bottom:0.5rem; }
+    .state-area { min-height:200px; }
+    .empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4rem 2rem; color:var(--dim); text-align:center; gap:0.8rem; border:1px dashed var(--border); }
+    .empty-icon { font-size:2rem; opacity:0.4; }
+    .empty-text { font-size:0.78rem; }
+    .loading-state { display:none; flex-direction:column; align-items:center; justify-content:center; padding:3rem; gap:1rem; color:var(--muted); font-size:0.78rem; border:1px solid var(--border); }
+    .loading-state.show { display:flex; }
+    .load-bar { width:200px; height:2px; background:var(--panel2); position:relative; overflow:hidden; }
+    .load-bar::after { content:''; position:absolute; left:-50%; top:0; width:50%; height:100%; background:linear-gradient(90deg,transparent,var(--blue),transparent); animation:loadSlide 1.2s ease-in-out infinite; }
+    @keyframes loadSlide { from{left:-50%} to{left:100%} }
+    .load-msg { color:var(--dim); font-size:0.7rem; text-align:center; min-height:1.5rem; }
+    .result-card { background:var(--panel); border:1px solid var(--border); margin-bottom:1rem; animation:cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+    @keyframes cardIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    .card-header { display:flex; justify-content:space-between; align-items:flex-start; padding:1.2rem 1.5rem; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:0.8rem; }
+    .card-name { font-family:var(--sans); font-size:1.3rem; font-weight:700; color:#fff; line-height:1.2; }
+    .card-cycle { font-size:0.75rem; color:var(--muted); margin-top:0.2rem; }
+    .status-pill { font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:0.3rem 0.9rem; border-radius:999px; flex-shrink:0; }
+    .pill-eol { background:rgba(248,81,73,0.15); color:var(--red); border:1px solid rgba(248,81,73,0.4); }
+    .pill-warn { background:rgba(227,179,65,0.15); color:var(--yellow); border:1px solid rgba(227,179,65,0.4); }
+    .pill-active { background:rgba(86,211,100,0.12); color:var(--green); border:1px solid rgba(86,211,100,0.4); }
+    .pill-lts { background:rgba(188,140,255,0.12); color:var(--purple); border:1px solid rgba(188,140,255,0.4); }
+    .data-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); }
+    .data-cell { background:var(--panel); padding:0.9rem 1.2rem; }
+    .data-cell:hover { background:var(--panel2); }
+    .dc-label { font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--dim); margin-bottom:0.35rem; }
+    .dc-value { font-size:0.88rem; font-weight:700; font-family:var(--mono); }
+    .dc-value.green{color:var(--green)} .dc-value.yellow{color:var(--yellow)} .dc-value.red{color:var(--red)} .dc-value.blue{color:var(--blue)} .dc-value.muted{color:var(--muted);font-weight:400}
+    .ai-block { padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; gap:1rem; align-items:flex-start; }
+    .ai-icon { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--purple); border:1px solid rgba(188,140,255,0.3); padding:0.2rem 0.5rem; white-space:nowrap; flex-shrink:0; margin-top:0.1rem; }
+    .ai-text { font-size:0.78rem; color:var(--muted); line-height:1.7; }
+    .cve-warning { padding:1.1rem 1.5rem; border-top:1px solid rgba(248,81,73,0.25); background:rgba(248,81,73,0.06); display:flex; gap:1rem; align-items:flex-start; }
+    .cve-icon-col { flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:0.3rem; padding-top:0.1rem; }
+    .cve-skull { font-size:1.2rem; animation:skullPulse 3s ease-in-out infinite; }
+    @keyframes skullPulse { 0%,100%{filter:drop-shadow(0 0 4px rgba(248,81,73,0.4))} 50%{filter:drop-shadow(0 0 10px rgba(248,81,73,0.9))} }
+    .cve-tag { font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--red); border:1px solid rgba(248,81,73,0.4); padding:0.15rem 0.4rem; white-space:nowrap; }
+    .cve-body { flex:1; }
+    .cve-title { font-family:var(--sans); font-size:0.85rem; font-weight:700; color:var(--red); margin-bottom:0.4rem; }
+    .cve-text { font-size:0.75rem; color:#c9a0a0; line-height:1.75; }
+    .cve-points { margin-top:0.6rem; display:flex; flex-direction:column; gap:0.3rem; }
+    .cve-point { font-size:0.7rem; color:#a07878; display:flex; gap:0.6rem; }
+    .cve-point::before { content:'›'; color:var(--red); flex-shrink:0; }
+    .cve-badge { display:inline-flex; align-items:center; gap:0.4rem; margin-top:0.7rem; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--yellow); border:1px solid rgba(227,179,65,0.3); padding:0.3rem 0.7rem; background:rgba(227,179,65,0.06); }
+    .source-badge { padding:0.6rem 1.5rem; border-top:1px solid var(--border); font-size:0.62rem; color:var(--dim); display:flex; align-items:center; gap:0.5rem; }
+    .source-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+    .reset-btn { margin-top:1rem; text-align:center; }
+    .reset-btn button { background:transparent; border:1px solid var(--border); color:var(--muted); font-family:var(--mono); font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.6rem 1.5rem; cursor:pointer; transition:all 0.15s; }
+    .reset-btn button:hover { border-color:var(--blue); color:var(--blue); }
+    .error-card { background:rgba(248,81,73,0.06); border:1px solid rgba(248,81,73,0.2); padding:1.2rem 1.5rem; color:var(--red); font-size:0.8rem; }
+    .browser-section { margin-top:3rem; border-top:1px solid var(--border); padding-top:2rem; }
+    .browser-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem; }
+    .browser-title { font-family:var(--sans); font-size:0.85rem; font-weight:700; color:var(--text); }
+    .browser-count { font-size:0.65rem; color:var(--dim); }
+    .filter-input { width:100%; background:var(--panel); border:1px solid var(--border); color:var(--text); font-family:var(--mono); font-size:0.78rem; padding:0.5rem 0.8rem; outline:none; margin-bottom:1rem; }
+    .filter-input:focus { border-color:var(--blue); }
+    .filter-input::placeholder { color:var(--dim); }
+    .product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:1px; background:var(--border); max-height:360px; overflow-y:auto; }
+    .prod-item { background:var(--panel); padding:0.6rem 0.8rem; cursor:pointer; transition:background 0.12s; font-size:0.72rem; color:var(--muted); display:flex; align-items:center; gap:0.4rem; }
+    .prod-item:hover { background:var(--panel2); color:var(--blue); }
+    .prod-item::before { content:'›'; color:var(--dim); flex-shrink:0; }
+    .footer { margin-top:4rem; padding-top:1.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.8rem; font-size:0.65rem; color:var(--dim); }
+    .footer a { color:var(--blue); text-decoration:none; }
+    @media(max-width:640px){ .data-grid{grid-template-columns:1fr 1fr} .search-prompt{display:none} }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><a href="index.html">endoflife.ai</a> · EOL Checker</div>
+    <h1 class="hero-title">Is it still<br><span>supported?</span></h1>
+    <p class="hero-sub">Instant lifecycle data for 35+ major products. CVE blind spot detection included.</p>
+    <div class="data-sources">
+      <div class="source-tag"><span class="dot" style="background:var(--green)"></span>Local Database</div>
+      <div class="source-tag"><span class="dot" style="background:var(--purple)"></span>Claude AI + Web Search</div>
+      <div class="source-tag"><span class="dot" style="background:var(--blue)"></span>454+ Products</div>
+    </div>
+  </header>
+
+  <div class="mode-row">
+    <span class="mode-label">Mode:</span>
+    <button class="mode-btn active" id="modeSingle" onclick="setMode('single')">Single Lookup</button>
+    <button class="mode-btn" id="modeCompare" onclick="setMode('compare')">Compare Products</button>
+  </div>
+
+  <div class="search-block">
+    <div class="search-label" id="searchLabel">// Enter a product name or version</div>
+    <div class="search-row">
+      <div class="search-prompt">$ eol check</div>
+      <input type="text" class="search-input" id="mainInput" placeholder="windows-10, nodejs, python, mysql..." autocomplete="off" spellcheck="false"/>
+      <button class="search-btn" id="searchBtn" onclick="doSearch()">Check →</button>
+    </div>
+    <div class="chips">
+      <span class="chips-label">Popular:</span>
+      <span class="chip" onclick="quickSearch('windows-10')">windows-10</span>
+      <span class="chip" onclick="quickSearch('nodejs')">node.js</span>
+      <span class="chip" onclick="quickSearch('python')">python</span>
+      <span class="chip" onclick="quickSearch('mysql')">mysql</span>
+      <span class="chip" onclick="quickSearch('ubuntu')">ubuntu</span>
+      <span class="chip" onclick="quickSearch('php')">php</span>
+      <span class="chip" onclick="quickSearch('kubernetes')">kubernetes</span>
+      <span class="chip" onclick="quickSearch('angularjs')">angularjs</span>
+      <span class="chip" onclick="quickSearch('redis')">redis</span>
+      <span class="chip" onclick="quickSearch('centos')">centos</span>
+      <span class="chip" onclick="quickSearch('vue')">vue</span>
+      <span class="chip" onclick="quickSearch('dotnet')">.net</span>
+    </div>
+  </div>
+
+  <div id="compareInputs">
+    <div class="search-block">
+      <div class="search-label">// Product 2</div>
+      <div class="search-row">
+        <div class="search-prompt">$ eol check</div>
+        <input type="text" class="search-input" id="compareInput2" placeholder="Second product..."/>
+      </div>
+    </div>
+    <div class="search-block" style="margin-bottom:1.5rem">
+      <div class="search-label">// Product 3 (optional)</div>
+      <div class="search-row">
+        <div class="search-prompt">$ eol check</div>
+        <input type="text" class="search-input" id="compareInput3" placeholder="Third product (optional)..."/>
+      </div>
+    </div>
+  </div>
+
+  <!-- State area: empty / loading / results all go here -->
+  <div id="stateArea">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">◎</div>
+      <div class="empty-text">Search for any product above to see its lifecycle status</div>
+    </div>
+    <div class="loading-state" id="loadingState">
+      <div class="load-bar"></div>
+      <div class="load-msg" id="loadMsg">Looking up lifecycle data...</div>
+    </div>
+    <div id="resultsArea"></div>
+  </div>
+
+  <div class="browser-section" id="productBrowser" style="display:none">
+    <div class="browser-header">
+      <div class="browser-title">// Product Directory</div>
+      <div class="browser-count" id="browserCount"></div>
+    </div>
+    <input type="text" class="filter-input" id="filterInput" placeholder="Filter products..." oninput="filterProducts()"/>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+
+  <div class="footer">
+    <span>Data: <a href="https://endoflife.date" target="_blank">endoflife.date</a> · MIT License</span>
+    <span>AI enrichment by Claude · <a href="index.html">← endoflife.ai</a></span>
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+let mode = 'single';
+let allProducts = [];
+const EOL_DIRECT = 'https://endoflife.date/api';
+
+// ── UI HELPERS ─────────────────────────────────────────
+function showEmpty() {
+  document.getElementById('emptyState').style.display = 'flex';
+  document.getElementById('loadingState').classList.remove('show');
+  document.getElementById('resultsArea').innerHTML = '';
+}
+
+function showLoading(msg) {
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('loadingState').classList.add('show');
+  document.getElementById('resultsArea').innerHTML = '';
+  document.getElementById('loadMsg').textContent = msg || 'Looking up lifecycle data...';
+}
+
+function showResults(html) {
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('loadingState').classList.remove('show');
+  document.getElementById('resultsArea').innerHTML = html;
+  // Animate timeline bars
+  setTimeout(() => {
+    document.querySelectorAll('[data-fill]').forEach(el => {
+      el.style.width = el.getAttribute('data-fill') + '%';
+    });
+  }, 80);
+}
+
+function setLoadMsg(msg) {
+  document.getElementById('loadMsg').textContent = msg;
+}
+
+function resetTool() {
+  document.getElementById('mainInput').value = '';
+  showEmpty();
+  document.getElementById('mainInput').focus();
+}
+
+// ── MODE ───────────────────────────────────────────────
+function setMode(m) {
+  mode = m;
+  document.getElementById('modeSingle').classList.toggle('active', m === 'single');
+  document.getElementById('modeCompare').classList.toggle('active', m === 'compare');
+  document.getElementById('compareInputs').style.display = m === 'compare' ? 'block' : 'none';
+  document.getElementById('searchLabel').textContent = m === 'compare'
+    ? '// Product 1 — enter up to 3 products'
+    : '// Enter a product name or version';
+}
+
+// ── SEARCH ─────────────────────────────────────────────
+function quickSearch(q) {
+  document.getElementById('mainInput').value = q;
+  doSearch();
+}
+
+async function doSearch() {
+  const q1 = document.getElementById('mainInput').value.trim();
+  if (!q1) return;
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true;
+  if (mode === 'compare') {
+    const q2 = document.getElementById('compareInput2').value.trim();
+    const q3 = document.getElementById('compareInput3').value.trim();
+    await doCompare([q1, q2, q3].filter(Boolean));
+  } else {
+    await doSingleLookup(q1);
+  }
+  btn.disabled = false;
+}
+
+// ── ALIASES ─────────────────────────────────────────────
+const ALIASES = {
+  'windows 10':'windows','win10':'windows','win 10':'windows','windows 11':'windows','win11':'windows',
+  'node':'nodejs','node.js':'nodejs','node js':'nodejs','node 18':'nodejs','node 20':'nodejs','node 22':'nodejs',
+  'python 3.9':'python','python 3.10':'python','python 3.11':'python','python 3.12':'python','py':'python',
+  'mysql 5.7':'mysql','mysql 8.0':'mysql','mysql 8':'mysql',
+  'postgres':'postgresql','pg':'postgresql',
+  'ubuntu 20.04':'ubuntu','ubuntu 22.04':'ubuntu','ubuntu 24.04':'ubuntu',
+  'centos 7':'centos','centos 8':'centos',
+  'angular js':'angularjs','angular.js':'angularjs',
+  'k8s':'kubernetes','kube':'kubernetes',
+  'elastic':'elasticsearch','mongo':'mongodb',
+  'php 8.1':'php','php 8.2':'php','php 8.3':'php',
+  'ruby on rails':'rails','vue.js':'vue','vuejs':'vue',
+  'react.js':'react','reactjs':'react','spring boot':'spring-framework',
+  'java 11':'java','java 17':'java','java 21':'java','openjdk':'java',
+  'golang':'go','.net':'dotnet','dot net':'dotnet',
+  'ios':'ios','mac os':'macos','osx':'macos',
+  'red hat':'rhel','redhat':'rhel',
+  'amazon linux':'amazon-linux',
+  'hashicorp boundary':'boundary','hcp boundary':'boundary',
+  'hashicorp vault':'vault','hcp vault':'vault',
+  'hashicorp consul':'consul','hcp consul':'consul',
+  'hashicorp nomad':'nomad','hcp nomad':'nomad',
+  'hashicorp packer':'packer',
+  'hashicorp terraform':'terraform','hcp terraform':'terraform',
+
+  'amazon glue':'aws-glue','glue':'aws-glue','aws glue':'aws-glue',
+  'lambda':'aws-lambda','aws lambda':'aws-lambda',
+  'rds':'aws-rds','aws rds':'aws-rds',
+  'eks':'aws-eks','aws eks':'aws-eks',
+  'kafka':'apache-kafka','apache kafka':'apache-kafka',
+  'rabbit':'rabbitmq','rabbit mq':'rabbitmq',
+  'tf':'terraform',
+  'wp':'wordpress',
+'nginx':'nginx',
+};
+
+function resolveSlug(raw) {
+  const lower = raw.toLowerCase().trim();
+  if (ALIASES[lower]) return ALIASES[lower];
+  const noVer = lower.replace(/[\s\-_]?v?\d+(\.\d+)*$/, '').trim();
+  if (ALIASES[noVer]) return ALIASES[noVer];
+  return lower.replace(/\s+/g, '-');
+}
+
+// ── LOCAL DATABASE ──────────────────────────────────────
+const LOCAL_DB = {
+  'windows':      {name:'Windows 10',version:'All editions',status:'eol',eolDate:'2025-10-14',releaseDate:'2015-07-29',latestVersion:'22H2',patches:'None — unsupported',successor:'Windows 11',summary:'Windows 10 reached end of life on October 14, 2025.',recommendation:'Upgrade to Windows 11 immediately.',riskLevel:'CRITICAL'},
+  'windows-10':   {name:'Windows 10',version:'All editions',status:'eol',eolDate:'2025-10-14',releaseDate:'2015-07-29',latestVersion:'22H2',patches:'None — unsupported',successor:'Windows 11',summary:'Windows 10 reached end of life on October 14, 2025.',recommendation:'Upgrade to Windows 11 immediately.',riskLevel:'CRITICAL'},
+  'windows-11':   {name:'Windows 11',version:'All editions',status:'active',eolDate:'2031-10-14',releaseDate:'2021-10-05',latestVersion:'24H2',patches:'Monthly security updates',successor:null,summary:'Windows 11 is actively supported.',recommendation:'Keep updated with monthly patches.',riskLevel:'LOW'},
+  'nodejs':       {name:'Node.js',version:'Multiple LTS cycles',status:'active',eolDate:'2026-04-30',releaseDate:'2009-05-27',latestVersion:'22.x LTS',patches:'Node 20 LTS active; Node 18 EOL Apr 2025',successor:'Node.js 22 LTS',summary:'Node.js 22 LTS is the recommended version. Node 20 LTS ends April 2026.',recommendation:'Migrate to Node.js 22 LTS.',riskLevel:'MEDIUM'},
+  'python':       {name:'Python',version:'Multiple cycles',status:'active',eolDate:'2029-10-31',releaseDate:'1991-02-20',latestVersion:'3.13.x',patches:'Python 3.12 and 3.13 actively supported',successor:null,summary:'Python 3.12 and 3.13 are actively maintained. Python 3.9 and earlier are EOL.',recommendation:'Use Python 3.12 or 3.13 for production.',riskLevel:'LOW'},
+  'mysql':        {name:'MySQL',version:'Multiple versions',status:'warn',eolDate:'2026-04-30',releaseDate:'1995-05-23',latestVersion:'8.4 LTS',patches:'MySQL 5.7 EOL Oct 2023; MySQL 8.0 EOL Apr 2026',successor:'MySQL 8.4 LTS',summary:'MySQL 5.7 EOL since Oct 2023. MySQL 8.0 reaches EOL April 2026.',recommendation:'Migrate to MySQL 8.4 LTS immediately if on 5.7.',riskLevel:'HIGH'},
+  'ubuntu':       {name:'Ubuntu',version:'Multiple LTS releases',status:'active',eolDate:'2029-04-25',releaseDate:'2004-10-20',latestVersion:'24.04 LTS',patches:'Ubuntu 24.04 LTS active until 2029',successor:null,summary:'Ubuntu 24.04 LTS is the current release. Ubuntu 20.04 standard support ended April 2025.',recommendation:'Upgrade to Ubuntu 24.04 LTS.',riskLevel:'LOW'},
+  'php':          {name:'PHP',version:'Multiple cycles',status:'warn',eolDate:'2026-12-31',releaseDate:'1994-06-08',latestVersion:'8.3.x',patches:'PHP 8.1 EOL Dec 2024; PHP 8.2 and 8.3 active',successor:'PHP 8.3 / 8.4',summary:'PHP 8.1 reached EOL December 2024. PHP 8.2 and 8.3 are active.',recommendation:'Upgrade to PHP 8.3 if on 8.1 or earlier.',riskLevel:'HIGH'},
+  'kubernetes':   {name:'Kubernetes',version:'Multiple minor releases',status:'active',eolDate:'2026-10-28',releaseDate:'2014-06-07',latestVersion:'1.32',patches:'1.30, 1.31, 1.32 actively supported',successor:null,summary:'Kubernetes supports latest 3 releases. Versions older than 1.30 are unsupported.',recommendation:'Stay within N-2 of latest release.',riskLevel:'MEDIUM'},
+  'angular':      {name:'Angular',version:'Multiple major versions',status:'active',eolDate:'2026-11-15',releaseDate:'2016-09-14',latestVersion:'v18.x',patches:'Angular 16+ actively supported',successor:null,summary:'Angular 16 and later are actively supported. Angular 14 and earlier are EOL.',recommendation:'Upgrade to Angular 17 or 18.',riskLevel:'MEDIUM'},
+  'angularjs':    {name:'AngularJS',version:'1.x',status:'eol',eolDate:'2021-12-31',releaseDate:'2010-10-20',latestVersion:'1.8.3',patches:'None — EOL since December 2021',successor:'Angular 17+',summary:'AngularJS (v1.x) has been EOL since December 2021.',recommendation:'Migrate to Angular 17+. AngularJS carries critical unpatched CVE risk.',riskLevel:'CRITICAL'},
+  'redis':        {name:'Redis',version:'Multiple releases',status:'active',eolDate:'2026-12-31',releaseDate:'2009-05-10',latestVersion:'7.4.x',patches:'Redis 7.2 and 7.4 actively supported',successor:null,summary:'Redis 7.x is actively maintained. Redis 6.x EOL March 2024.',recommendation:'Upgrade to Redis 7.2 or 7.4.',riskLevel:'LOW'},
+  'java':         {name:'Java (OpenJDK)',version:'Multiple LTS releases',status:'active',eolDate:'2031-09-30',releaseDate:'1995-05-23',latestVersion:'Java 21 LTS',patches:'Java 11, 17, 21 LTS actively supported',successor:null,summary:'Java 21 LTS is the current long-term support release.',recommendation:'Use Java 21 LTS for new projects.',riskLevel:'LOW'},
+  'django':       {name:'Django',version:'Multiple cycles',status:'active',eolDate:'2026-04-30',releaseDate:'2005-07-21',latestVersion:'5.1.x',patches:'Django 4.2 LTS and 5.1 active',successor:null,summary:'Django 4.2 LTS and 5.1 are actively maintained.',recommendation:'Use Django 4.2 LTS or 5.1. Django 3.x and earlier are EOL.',riskLevel:'LOW'},
+  'postgresql':   {name:'PostgreSQL',version:'Multiple major versions',status:'active',eolDate:'2029-11-09',releaseDate:'1996-07-08',latestVersion:'17.x',patches:'PostgreSQL 13–17 actively supported',successor:null,summary:'PostgreSQL 13–17 are active. PostgreSQL 12 EOL November 2024.',recommendation:'Upgrade to PostgreSQL 16 or 17.',riskLevel:'LOW'},
+  'mongodb':      {name:'MongoDB',version:'Multiple major versions',status:'active',eolDate:'2027-02-01',releaseDate:'2009-02-11',latestVersion:'7.0 LTS',patches:'MongoDB 6.0 and 7.0 active',successor:null,summary:'MongoDB 7.0 is the current LTS. MongoDB 5.0 EOL October 2024.',recommendation:'Migrate to MongoDB 7.0 LTS.',riskLevel:'LOW'},
+  'elasticsearch':{name:'Elasticsearch',version:'Multiple versions',status:'active',eolDate:'2026-08-01',releaseDate:'2010-02-08',latestVersion:'8.x',patches:'Elasticsearch 7.17 and 8.x active',successor:null,summary:'Elasticsearch 8.x is actively supported. ES 6.x EOL November 2022.',recommendation:'Upgrade to Elasticsearch 8.x.',riskLevel:'MEDIUM'},
+  'nginx':        {name:'NGINX',version:'Stable / Mainline',status:'active',eolDate:null,releaseDate:'2004-10-04',latestVersion:'1.27.x mainline',patches:'Stable and mainline actively maintained',successor:null,summary:'NGINX is actively maintained with no set EOL.',recommendation:'Keep updated for security patches.',riskLevel:'LOW'},
+  'debian':       {name:'Debian',version:'Multiple releases',status:'active',eolDate:'2028-06-30',releaseDate:'1993-09-15',latestVersion:'Debian 12 (Bookworm)',patches:'Debian 11 and 12 active',successor:null,summary:'Debian 12 is current, supported until June 2028. Debian 10 EOL August 2024.',recommendation:'Use Debian 12. Upgrade from Debian 10 immediately.',riskLevel:'LOW'},
+  'centos':       {name:'CentOS',version:'CentOS Stream',status:'warn',eolDate:'2027-06-30',releaseDate:'2004-05-14',latestVersion:'CentOS Stream 9/10',patches:'CentOS 7 EOL June 2024; Stream 9 active',successor:'AlmaLinux / Rocky Linux',summary:'CentOS 7 reached EOL June 2024. CentOS Stream 9 is active.',recommendation:'Migrate from CentOS 7 to AlmaLinux 9 or Rocky Linux 9 immediately.',riskLevel:'CRITICAL'},
+  'rhel':         {name:'Red Hat Enterprise Linux',version:'Multiple versions',status:'active',eolDate:'2032-05-31',releaseDate:'2000-02-22',latestVersion:'RHEL 9.x',patches:'RHEL 8 and 9 in full support',successor:null,summary:'RHEL 9 is in full support until 2032. RHEL 7 EOL June 2024.',recommendation:'Run RHEL 8 or 9 for full security support.',riskLevel:'LOW'},
+  'spring-framework':{name:'Spring Framework',version:'Multiple versions',status:'active',eolDate:'2027-12-31',releaseDate:'2002-10-01',latestVersion:'6.1.x',patches:'Spring 5.3 and 6.x active',successor:null,summary:'Spring Framework 6.1 is current. Spring 5.3 OSS support ended Dec 2024.',recommendation:'Migrate to Spring 6.x for continued security support.',riskLevel:'MEDIUM'},
+  'vue':          {name:'Vue.js',version:'Vue 2 / Vue 3',status:'warn',eolDate:'2024-12-31',releaseDate:'2014-02-01',latestVersion:'Vue 3.x',patches:'Vue 2 EOL Dec 2023; Vue 3 active',successor:'Vue 3',summary:'Vue 2 reached EOL December 2023. Vue 3 is actively maintained.',recommendation:'Migrate from Vue 2 to Vue 3 immediately.',riskLevel:'HIGH'},
+  'react':        {name:'React',version:'Active development',status:'active',eolDate:null,releaseDate:'2013-05-29',latestVersion:'18.x / 19.x',patches:'Actively maintained by Meta',successor:null,summary:'React is actively maintained with no set EOL.',recommendation:'Stay updated. React 16 and 17 no longer receive updates.',riskLevel:'LOW'},
+  'go':           {name:'Go',version:'Two latest minor releases',status:'active',eolDate:null,releaseDate:'2009-11-10',latestVersion:'1.22.x',patches:'Go 1.21 and 1.22 active',successor:null,summary:'Go supports the two most recent minor releases.',recommendation:'Stay within one release of latest.',riskLevel:'LOW'},
+  'rust':         {name:'Rust',version:'Rolling release',status:'active',eolDate:null,releaseDate:'2015-05-15',latestVersion:'1.78.x',patches:'Rolling release — always current',successor:null,summary:'Rust uses a rolling release model.',recommendation:'Always use the latest stable release via rustup.',riskLevel:'LOW'},
+  'dotnet':       {name:'.NET',version:'Multiple LTS releases',status:'active',eolDate:'2026-11-10',releaseDate:'2016-06-27',latestVersion:'.NET 9',patches:'.NET 8 LTS and .NET 9 active',successor:'.NET 10 LTS',summary:'.NET 8 LTS (until Nov 2026) and .NET 9 are active. .NET 6 EOL Nov 2024.',recommendation:'Use .NET 8 LTS. Migrate from .NET 6 immediately.',riskLevel:'LOW'},
+  'ios':          {name:'iOS / iPadOS',version:'Multiple versions',status:'active',eolDate:null,releaseDate:'2007-06-29',latestVersion:'iOS 18.x',patches:'iOS 17 and 18 receive updates',successor:null,summary:'Apple actively supports current iOS and one prior major version.',recommendation:'Update to iOS 18 for full security coverage.',riskLevel:'MEDIUM'},
+  'macos':        {name:'macOS',version:'Multiple versions',status:'active',eolDate:null,releaseDate:'2001-03-24',latestVersion:'macOS Sequoia (15.x)',patches:'Sequoia, Sonoma, Ventura active',successor:null,summary:'Apple supports current macOS and two prior versions.',recommendation:'Run macOS Sonoma or Sequoia for full support.',riskLevel:'MEDIUM'},
+  'android':      {name:'Android',version:'Multiple versions',status:'active',eolDate:null,releaseDate:'2008-09-23',latestVersion:'Android 15',patches:'Android 12–15 receiving updates',successor:null,summary:'Google supports Android with patches for ~3 years from release.',recommendation:'Android 11 and earlier no longer receive Google patches.',riskLevel:'MEDIUM'},
+  'mariadb':      {name:'MariaDB',version:'Multiple versions',status:'active',eolDate:'2028-02-01',releaseDate:'2009-10-29',latestVersion:'11.4 LTS',patches:'MariaDB 10.6, 10.11, 11.4 LTS active',successor:null,summary:'MariaDB 10.6 LTS, 10.11 LTS, and 11.4 LTS are maintained.',recommendation:'Use MariaDB 11.4 LTS. MariaDB 10.4 and earlier are EOL.',riskLevel:'LOW'},
+  'tomcat':       {name:'Apache Tomcat',version:'Multiple versions',status:'active',eolDate:'2027-03-31',releaseDate:'1999-12-03',latestVersion:'10.1.x / 11.x',patches:'Tomcat 9, 10.1, 11 active',successor:null,summary:'Tomcat 9, 10.1, and 11 are maintained. Tomcat 8.5 EOL March 2024.',recommendation:'Migrate from Tomcat 8.5. Use 10.1 or 11 for Jakarta EE.',riskLevel:'MEDIUM'},
+  'jenkins':      {name:'Jenkins',version:'LTS / Weekly',status:'active',eolDate:null,releaseDate:'2011-02-02',latestVersion:'2.452.x LTS',patches:'LTS actively maintained',successor:null,summary:'Jenkins LTS is actively maintained with monthly security releases.',recommendation:'Run latest LTS and keep plugins updated.',riskLevel:'LOW'},
+  'gitlab':       {name:'GitLab',version:'Monthly releases',status:'active',eolDate:null,releaseDate:'2011-10-08',latestVersion:'17.x',patches:'Latest 3 minor versions supported',successor:null,summary:'GitLab supports latest 3 minor versions with security patches.',recommendation:'Stay within 3 minor versions of latest.',riskLevel:'MEDIUM'},
+  'amazon-linux': {name:'Amazon Linux',version:'AL2 / AL2023',status:'eol',eolDate:'2025-06-30',releaseDate:'2010-09-02',latestVersion:'Amazon Linux 2023',patches:'Amazon Linux 2 EOL Jun 2025; AL2023 active',successor:'Amazon Linux 2023',summary:'Amazon Linux 2 reached EOL June 30, 2025.',recommendation:'Migrate from Amazon Linux 2 to AL2023 immediately.',riskLevel:'CRITICAL'},
+
+  'aws-glue':         {name:'AWS Glue',version:'Managed ETL Service',status:'active',eolDate:null,releaseDate:'2017-08-14',latestVersion:'AWS Glue 4.0',patches:'Actively maintained by AWS',successor:null,summary:'AWS Glue is an active managed service. AWS Glue 1.0 and 2.0 job runtimes are deprecated — Glue 4.0 is current.',recommendation:'Migrate Glue jobs to Glue 4.0 runtime. Glue 0.9 and 1.0 runtimes are end of support.',riskLevel:'MEDIUM'},
+  'amazon-glue':      {name:'AWS Glue',version:'Managed ETL Service',status:'active',eolDate:null,releaseDate:'2017-08-14',latestVersion:'AWS Glue 4.0',patches:'Actively maintained by AWS',successor:null,summary:'AWS Glue is an active managed service. AWS Glue 1.0 and 2.0 job runtimes are deprecated — Glue 4.0 is current.',recommendation:'Migrate Glue jobs to Glue 4.0 runtime. Glue 0.9 and 1.0 runtimes are end of support.',riskLevel:'MEDIUM'},
+  'aws-lambda':       {name:'AWS Lambda',version:'Multiple runtimes',status:'warn',eolDate:'2025-12-31',releaseDate:'2014-11-13',latestVersion:'Node 22 / Python 3.13 / Java 21',patches:'Node 16, Python 3.8, Java 8 runtimes deprecated',successor:'Latest runtime versions',summary:'AWS Lambda deprecates old runtimes regularly. Node.js 16, Python 3.8, and Ruby 2.7 runtimes are EOL.',recommendation:'Update Lambda functions to Node 22, Python 3.13, or Java 21 runtimes immediately.',riskLevel:'HIGH'},
+  'aws-rds':          {name:'AWS RDS',version:'Multiple engines',status:'active',eolDate:null,releaseDate:'2009-10-22',latestVersion:'Varies by engine',patches:'Actively maintained — follows upstream EOL',successor:null,summary:'AWS RDS follows upstream database EOL dates. MySQL 5.7 and PostgreSQL 11 on RDS are EOL.',recommendation:'Upgrade RDS instances to current engine versions before AWS forces auto-upgrades.',riskLevel:'MEDIUM'},
+  'aws-eks':          {name:'AWS EKS',version:'Multiple Kubernetes versions',status:'active',eolDate:null,releaseDate:'2018-06-05',latestVersion:'Kubernetes 1.30+',patches:'EKS follows Kubernetes upstream support window',successor:null,summary:'EKS supports Kubernetes N-2 versions. Older versions receive end-of-support notices.',recommendation:'Stay within supported Kubernetes versions on EKS to avoid forced upgrades.',riskLevel:'MEDIUM'},
+  'elasticsearch':    {name:'Elasticsearch',version:'Multiple versions',status:'active',eolDate:'2026-08-01',releaseDate:'2010-02-08',latestVersion:'8.x',patches:'Elasticsearch 7.17 and 8.x active',successor:null,summary:'Elasticsearch 8.x is actively supported. ES 6.x EOL November 2022.',recommendation:'Upgrade to Elasticsearch 8.x.',riskLevel:'MEDIUM'},
+  'apache-kafka':     {name:'Apache Kafka',version:'Multiple versions',status:'active',eolDate:null,releaseDate:'2011-01-01',latestVersion:'3.7.x',patches:'Kafka 3.x actively maintained',successor:null,summary:'Apache Kafka 3.x is actively maintained. Kafka 2.x is no longer receiving patches.',recommendation:'Upgrade to Kafka 3.x. Kafka 2.8 and earlier are unsupported.',riskLevel:'MEDIUM'},
+  'kafka':            {name:'Apache Kafka',version:'Multiple versions',status:'active',eolDate:null,releaseDate:'2011-01-01',latestVersion:'3.7.x',patches:'Kafka 3.x actively maintained',successor:null,summary:'Apache Kafka 3.x is actively maintained. Kafka 2.x is no longer receiving patches.',recommendation:'Upgrade to Kafka 3.x. Kafka 2.8 and earlier are unsupported.',riskLevel:'MEDIUM'},
+  'rabbitmq':         {name:'RabbitMQ',version:'Multiple versions',status:'active',eolDate:'2027-12-31',releaseDate:'2007-02-01',latestVersion:'3.13.x',patches:'RabbitMQ 3.12 and 3.13 active',successor:null,summary:'RabbitMQ 3.12 and 3.13 are actively maintained. RabbitMQ 3.10 and earlier are EOL.',recommendation:'Upgrade to RabbitMQ 3.13. Versions 3.10 and earlier receive no security patches.',riskLevel:'MEDIUM'},
+  'terraform':        {name:'Terraform / OpenTofu',version:'Multiple versions',status:'active',eolDate:null,releaseDate:'2014-07-28',latestVersion:'Terraform 1.9 / OpenTofu 1.7',patches:'Terraform 1.x actively maintained',successor:'OpenTofu (open-source fork)',summary:'Terraform 1.x is actively maintained by HashiCorp. OpenTofu is the open-source fork with active community support.',recommendation:'Stay on Terraform 1.x or migrate to OpenTofu if licence changes are a concern.',riskLevel:'LOW'},
+  'docker':           {name:'Docker Engine',version:'Multiple versions',status:'active',eolDate:null,releaseDate:'2013-03-20',latestVersion:'26.x',patches:'Docker Engine actively maintained',successor:null,summary:'Docker Engine is actively maintained. Older versions miss critical security patches.',recommendation:'Always run latest stable Docker Engine. Docker 20.x and earlier are unsupported.',riskLevel:'LOW'},
+  'wordpress':        {name:'WordPress',version:'Multiple versions',status:'active',eolDate:null,releaseDate:'2003-05-27',latestVersion:'6.x',patches:'Latest major version actively maintained',successor:null,summary:'WordPress actively maintains the latest major version. Older versions receive no security patches.',recommendation:'Always run the latest WordPress version and keep plugins updated.',riskLevel:'MEDIUM'},
+  'drupal':           {name:'Drupal',version:'Multiple versions',status:'warn',eolDate:'2025-11-01',releaseDate:'2001-01-15',latestVersion:'10.x / 11.x',patches:'Drupal 10 active; Drupal 9 EOL Nov 2023',successor:'Drupal 11',summary:'Drupal 9 reached EOL November 2023. Drupal 10 is actively supported.',recommendation:'Upgrade to Drupal 10 or 11 immediately if on Drupal 9.',riskLevel:'HIGH'},
+  'laravel':          {name:'Laravel',version:'Multiple versions',status:'active',eolDate:'2026-08-05',releaseDate:'2011-06-09',latestVersion:'11.x',patches:'Laravel 10 and 11 active',successor:null,summary:'Laravel 11 is current. Laravel 9 reached EOL February 2024.',recommendation:'Upgrade to Laravel 10 or 11. Laravel 9 and earlier are unsupported.',riskLevel:'MEDIUM'},
+  'symfony':          {name:'Symfony',version:'Multiple versions',status:'active',eolDate:'2026-07-01',releaseDate:'2005-10-22',latestVersion:'7.1.x',patches:'Symfony 6.4 LTS and 7.1 active',successor:null,summary:'Symfony 6.4 LTS (until Nov 2027) and 7.1 are actively maintained.',recommendation:'Use Symfony 6.4 LTS for stability or 7.1 for latest features.',riskLevel:'LOW'},
+
+  'boundary':         {name:'HashiCorp Boundary',version:'Community / Enterprise / HCP',status:'active',eolDate:null,releaseDate:'2020-10-01',latestVersion:'0.20.x',patches:'GA releases supported for 2 years per minor version',successor:null,summary:'HashiCorp Boundary is an identity-based secure remote access tool. GA releases receive 2 years of security support. Version 0.17 EOL September 2025.',recommendation:'Stay within supported minor versions. Upgrade to 0.18+ if on 0.17 or earlier.',riskLevel:'MEDIUM'},
+  'hashicorp-boundary':{name:'HashiCorp Boundary',version:'Community / Enterprise / HCP',status:'active',eolDate:null,releaseDate:'2020-10-01',latestVersion:'0.20.x',patches:'GA releases supported for 2 years per minor version',successor:null,summary:'HashiCorp Boundary is an identity-based secure remote access tool. GA releases receive 2 years of security support. Version 0.17 EOL September 2025.',recommendation:'Stay within supported minor versions. Upgrade to 0.18+ if on 0.17 or earlier.',riskLevel:'MEDIUM'},
+  'vault':            {name:'HashiCorp Vault',version:'Community / Enterprise',status:'active',eolDate:null,releaseDate:'2015-04-28',latestVersion:'1.17.x',patches:'GA releases supported for 2 years per minor version',successor:null,summary:'HashiCorp Vault is actively maintained. GA releases receive 2 years of security support per minor version.',recommendation:'Stay on a supported minor version. Check HashiCorp support policy for your specific version.',riskLevel:'LOW'},
+  'consul':           {name:'HashiCorp Consul',version:'Community / Enterprise',status:'active',eolDate:null,releaseDate:'2014-04-17',latestVersion:'1.19.x',patches:'GA releases supported for 2 years per minor version',successor:null,summary:'HashiCorp Consul is actively maintained. GA releases receive 2 years of security support.',recommendation:'Stay on a supported minor version per HashiCorp lifecycle policy.',riskLevel:'LOW'},
+  'nomad':            {name:'HashiCorp Nomad',version:'Community / Enterprise',status:'active',eolDate:null,releaseDate:'2015-09-28',latestVersion:'1.8.x',patches:'GA releases supported for 2 years per minor version',successor:null,summary:'HashiCorp Nomad is actively maintained. GA releases receive 2 years of security support.',recommendation:'Stay on a supported minor version per HashiCorp lifecycle policy.',riskLevel:'LOW'},
+  'packer':           {name:'HashiCorp Packer',version:'Community / Enterprise',status:'active',eolDate:null,releaseDate:'2013-08-28',latestVersion:'1.11.x',patches:'Actively maintained',successor:null,summary:'HashiCorp Packer is actively maintained with no set EOL.',recommendation:'Use the latest stable version for security fixes.',riskLevel:'LOW'},
+  'rails':        {name:'Ruby on Rails',version:'Multiple versions',status:'active',eolDate:'2026-06-01',releaseDate:'2004-12-13',latestVersion:'7.1.x',patches:'Rails 7.0 and 7.1 active',successor:null,summary:'Rails 7.1 is current. Rails 6.1 EOL August 2024.',recommendation:'Upgrade to Rails 7.1 if on 6.x.',riskLevel:'MEDIUM'},
+};
+
+// ── DATE HELPERS ───────────────────────────────────────
+function today() { return new Date(); }
+function daysFrom(d) {
+  if (!d) return null;
+  const diff = new Date(d) - today();
+  return isNaN(diff) ? null : Math.round(diff / 86400000);
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}); }
+  catch { return d; }
+}
+function statusColor(s) { return {eol:'red',warn:'yellow',active:'green'}[s]||'muted'; }
+function pillCls(s) { return {eol:'pill-eol',warn:'pill-warn',active:'pill-active'}[s]||'pill-active'; }
+function pillTxt(s) { return {eol:'End of Life',warn:'Expiring Soon',active:'Supported'}[s]||'Unknown'; }
+
+// ── CVE WARNING HTML ────────────────────────────────────
+function cveWarningHtml(status) {
+  if (status !== 'eol' && status !== 'warn') return '';
+  const msg = status === 'eol'
+    ? 'This software is <strong>no longer receiving security patches</strong> — but that\'s not the worst part.'
+    : 'This software is <strong>approaching end of life</strong> and may already carry unreported CVEs.';
+  return `
+    <div class="cve-warning">
+      <div class="cve-icon-col">
+        <span class="cve-skull">☠</span>
+        <span class="cve-tag">CVE Risk</span>
+      </div>
+      <div class="cve-body">
+        <div class="cve-title">CVE Blind Spot Detected</div>
+        <div class="cve-text">
+          ${msg} CVE reporters only test supported versions — attackers diff the patch and test your EOL build.
+          <div class="cve-points">
+            <div class="cve-point">CVE drops — only supported versions listed as affected</div>
+            <div class="cve-point">Your scanner finds no match — no alert fires</div>
+            <div class="cve-point"><strong style="color:var(--red)">Attacker knows. You don't.</strong></div>
+          </div>
+          <div class="cve-badge">⚠ Your vulnerability scanner may be systematically under-reporting risk</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── RESET BUTTON HTML ───────────────────────────────────
+const resetBtnHtml = `
+  <div class="reset-btn">
+    <button onclick="resetTool()">← Check Another Product</button>
+  </div>`;
+
+// ── RENDER RESULT (local DB / AI) ───────────────────────
+function renderResult(d) {
+  const s = d.status || 'active';
+  const col = statusColor(s);
+  const days = daysFrom(d.eolDate);
+  const timeInfo = days === null ? '' : days < 0
+    ? `EOL ${Math.abs(days)}d ago`
+    : `${days}d remaining`;
+
+  showResults(`
+    <div class="result-card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">${d.name}</div>
+          <div class="card-cycle">${d.version || ''}</div>
+        </div>
+        <span class="status-pill ${pillCls(s)}">${pillTxt(s)}</span>
+      </div>
+      <div class="data-grid">
+        <div class="data-cell">
+          <div class="dc-label">EOL Date</div>
+          <div class="dc-value ${col}">${fmtDate(d.eolDate)}</div>
+        </div>
+        <div class="data-cell">
+          <div class="dc-label">Timeline</div>
+          <div class="dc-value ${col}">${timeInfo || '—'}</div>
+        </div>
+        <div class="data-cell">
+          <div class="dc-label">Latest Version</div>
+          <div class="dc-value blue">${d.latestVersion || '—'}</div>
+        </div>
+        <div class="data-cell">
+          <div class="dc-label">Risk Level</div>
+          <div class="dc-value ${col}">${d.riskLevel || '—'}</div>
+        </div>
+      </div>
+      <div class="ai-block">
+        <span class="ai-icon">Summary</span>
+        <div class="ai-text">
+          ${d.summary || ''} ${d.recommendation || ''}
+          ${d.successor ? '<br><span style="color:var(--blue)">→ Recommended: ' + d.successor + '</span>' : ''}
+          ${d.patches ? '<br><span style="color:var(--dim)">Patches: ' + d.patches + '</span>' : ''}
+        </div>
+      </div>
+      ${cveWarningHtml(s)}
+      <div class="source-badge">
+        <span class="source-dot" style="background:var(--green)"></span>
+        endoflife.ai local database · Data current as of May 2026
+      </div>
+    </div>
+    ${resetBtnHtml}
+  `);
+}
+
+function renderError(msg) {
+  showResults(`<div class="error-card">⚠ ${msg}</div>${resetBtnHtml}`);
+}
+
+// ── SINGLE LOOKUP ───────────────────────────────────────
+async function doSingleLookup(query) {
+  showLoading('Looking up lifecycle data...');
+  const slug = resolveSlug(query);
+
+  // 1. Check local DB
+  const local = LOCAL_DB[slug] || LOCAL_DB[query.toLowerCase().trim()];
+  if (local) {
+    // Small delay so loading state is visible
+    await new Promise(r => setTimeout(r, 400));
+    renderResult(local);
+    return;
+  }
+
+  // 2. Try AI lookup for unknown products
+  setLoadMsg('Not in local database — searching the web...');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: `Search the web for end-of-life status of "${query}" as of May 2026. Respond ONLY with JSON (no markdown): {"name":"...","version":"...","status":"eol"|"warn"|"active","eolDate":"YYYY-MM-DD or null","latestVersion":"...","patches":"...","successor":"... or null","summary":"1-2 sentences","recommendation":"1-2 sentences","riskLevel":"LOW"|"MEDIUM"|"HIGH"|"CRITICAL"}` }]
+      })
+    });
+    const data = await res.json();
+    const text = (data.content||[]).filter(i=>i.type==='text').map(i=>i.text).join('');
+    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    renderResult(parsed);
+  } catch {
+    const slug = resolveSlug(query);
+    showResults(`
+      <div class="error-card" style="border-color:rgba(88,166,255,0.3);background:rgba(88,166,255,0.05);color:var(--blue)">
+        <div style="font-family:var(--sans);font-size:1rem;font-weight:700;margin-bottom:0.6rem;color:var(--text)">"${query}" not in local database</div>
+        <div style="color:var(--muted);font-size:0.78rem;line-height:1.8;margin-bottom:1rem">
+          Once deployed on your domain, the live endoflife.date API will cover all 454+ products automatically.<br>
+          In the meantime, check it directly:
+        </div>
+        <a href="https://endoflife.date/${slug}" target="_blank"
+           style="display:inline-block;background:var(--blue);color:var(--bg);font-family:var(--sans);font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:0.6rem 1.4rem;text-decoration:none;margin-bottom:1rem">
+          View ${query} on endoflife.date ↗
+        </a>
+        <div style="color:var(--dim);font-size:0.7rem">Or try: windows-10, nodejs, mysql, ubuntu, php, angularjs, centos, vue, dotnet, redis</div>
+      </div>
+      ${resetBtnHtml}
+    `);
+  }
+}
+
+// ── COMPARE ─────────────────────────────────────────────
+async function doCompare(queries) {
+  showLoading(`Comparing ${queries.length} products...`);
+  const results = [];
+  for (const q of queries) {
+    const slug = resolveSlug(q);
+    const local = LOCAL_DB[slug] || LOCAL_DB[q.toLowerCase().trim()];
+    results.push(local || { name: q, status: 'active', summary: 'No data found.', riskLevel: '—' });
+  }
+  const cols = results.length === 2 ? '1fr 1fr' : '1fr 1fr 1fr';
+  const cards = results.map(d => {
+    const s = d.status || 'active';
+    const col = statusColor(s);
+    return `
+      <div class="result-card">
+        <div class="card-header" style="flex-direction:column;gap:0.5rem">
+          <div class="card-name" style="font-size:1rem">${d.name}</div>
+          <span class="status-pill ${pillCls(s)}">${pillTxt(s)}</span>
+        </div>
+        <div class="data-grid" style="grid-template-columns:1fr 1fr">
+          <div class="data-cell"><div class="dc-label">EOL Date</div><div class="dc-value ${col}">${fmtDate(d.eolDate)}</div></div>
+          <div class="data-cell"><div class="dc-label">Risk</div><div class="dc-value ${col}">${d.riskLevel||'—'}</div></div>
+        </div>
+        <div class="ai-block"><span class="ai-icon">AI</span><div class="ai-text">${d.summary||''}</div></div>
+        ${cveWarningHtml(s)}
+      </div>`;
+  }).join('');
+  showResults(`<div style="display:grid;grid-template-columns:${cols};gap:1rem">${cards}</div>${resetBtnHtml}`);
+}
+
+// ── PRODUCT BROWSER ──────────────────────────────────────
+async function loadProductBrowser() {
+  try {
+    const r = await fetch(EOL_DIRECT + '/all.json', { mode: 'cors' });
+    if (!r.ok) throw new Error();
+    allProducts = await r.json();
+    document.getElementById('productBrowser').style.display = 'block';
+    document.getElementById('browserCount').textContent = allProducts.length + ' products';
+    renderGrid(allProducts);
+  } catch {
+    // Use local DB keys as fallback
+    allProducts = Object.keys(LOCAL_DB);
+    document.getElementById('productBrowser').style.display = 'block';
+    document.getElementById('browserCount').textContent = allProducts.length + ' products';
+    renderGrid(allProducts);
+  }
+}
+
+function renderGrid(list) {
+  document.getElementById('productGrid').innerHTML = list.map(p =>
+    `<div class="prod-item" onclick="quickSearch('${p}')">${p}</div>`
+  ).join('');
+}
+
+function filterProducts() {
+  const q = document.getElementById('filterInput').value.toLowerCase();
+  const filtered = allProducts.filter(p => p.toLowerCase().includes(q));
+  document.getElementById('browserCount').textContent = filtered.length + ' products';
+  renderGrid(filtered);
+}
+
+// ── KEYBOARD ─────────────────────────────────────────────
+document.getElementById('mainInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+// ── INIT ──────────────────────────────────────────────────
+loadProductBrowser();
+</script>
+</body>
+</html>

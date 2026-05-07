@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The 2026 EOL Calendar: Every Major Runtime and Framework — endoflife.ai</title>
+  <meta name="description" content="Python, Node.js, PHP, Ruby, Java LTS — every major platform support window in one place, updated quarterly."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#08090c; --surface:#0f1117; --surface2:#171c26; --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12); --text:#e2e8f0; --muted:#64748b; --dim:#374151; --accent:#4ade80; --accent2:#f59e0b; --red:#f87171; --blue:#60a5fa; --serif:'Instrument Serif',Georgia,serif; --mono:'Geist Mono',monospace; }
+    html { scroll-behavior: smooth; }
+    body { background:var(--bg); color:var(--text); font-family:var(--mono); font-size:13px; line-height:1.6; min-height:100vh; }
+    body::before { content:''; position:fixed; inset:0; background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px); background-size:28px 28px; pointer-events:none; z-index:0; }
+    body::after { content:''; position:fixed; top:-20%; left:50%; transform:translateX(-50%); width:800px; height:400px; background:radial-gradient(ellipse,rgba(74,222,128,0.04) 0%,transparent 70%); pointer-events:none; z-index:0; }
+    .z1 { position:relative; z-index:1; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:0 2.5rem; height:58px; background:rgba(8,9,12,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+    .nav-brand { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+    .nav-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); animation:breathe 3s ease-in-out infinite; }
+    @keyframes breathe { 0%,100%{opacity:1;box-shadow:0 0 10px var(--accent)} 50%{opacity:0.5;box-shadow:0 0 4px var(--accent)} }
+    .nav-name { font-size:0.78rem; font-weight:500; letter-spacing:0.05em; color:var(--text); }
+    .nav-name span { color:var(--accent); }
+    .nav-back { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--text); }
+    .wrap { max-width:720px; margin:0 auto; padding:9rem 2.5rem 6rem; }
+    .article-cat { font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); display:inline-flex; align-items:center; gap:0.6rem; margin-bottom:1.5rem; padding:0.3rem 0.8rem; border:1px solid rgba(74,222,128,0.2); background:rgba(74,222,128,0.05); }
+    .article-title { font-family:var(--serif); font-size:clamp(2rem,4vw,3rem); color:#fff; line-height:1.1; margin-bottom:1.2rem; letter-spacing:-0.02em; }
+    .article-excerpt { font-size:0.95rem; color:var(--muted); line-height:1.85; max-width:600px; margin-bottom:2rem; }
+    .article-meta { display:flex; align-items:center; gap:1.5rem; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); padding-bottom:2rem; border-bottom:1px solid var(--border); margin-bottom:3rem; }
+    .meta-dot { width:3px; height:3px; border-radius:50%; background:var(--dim); }
+    .article-body { font-size:0.88rem; line-height:1.9; color:var(--text); }
+    .article-body h2 { font-family:var(--serif); font-size:1.5rem; color:#fff; margin:3rem 0 1rem; line-height:1.2; }
+    .article-body p { margin-bottom:1.4rem; }
+    .article-body strong { color:#fff; font-weight:500; }
+    .article-body em { font-style:italic; color:var(--accent2); }
+    .eol-table { width:100%; border-collapse:collapse; margin:2rem 0; font-size:0.78rem; }
+    .eol-table th { font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--dim); padding:0.6rem 1rem; text-align:left; border-bottom:1px solid var(--border); }
+    .eol-table td { padding:0.75rem 1rem; border-bottom:1px solid var(--border); color:var(--muted); }
+    .eol-table tr:hover td { background:var(--surface); }
+    .eol-table .name { color:var(--text); font-weight:500; }
+    .status-eol { color:var(--red); }
+    .status-warn { color:var(--accent2); }
+    .status-active { color:var(--accent); }
+    .callout { background:var(--surface); border-left:2px solid var(--accent); padding:1.2rem 1.5rem; margin:2rem 0; font-size:0.85rem; color:var(--muted); line-height:1.8; }
+    .callout strong { color:var(--accent); }
+    .divider { height:1px; background:var(--border); margin:3rem 0; }
+    .next-article { background:var(--surface); border:1px solid var(--border); padding:1.5rem; margin-top:4rem; display:flex; justify-content:space-between; align-items:center; text-decoration:none; transition:border-color 0.2s; }
+    .next-article:hover { border-color:var(--border2); }
+    .na-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--dim); margin-bottom:0.4rem; }
+    .na-title { font-size:0.85rem; color:var(--text); }
+    .na-arrow { color:var(--accent); font-size:1.2rem; flex-shrink:0; }
+    .email-strip { background:var(--surface); border:1px solid var(--border); padding:2rem; margin-top:3rem; text-align:center; }
+    .es-title { font-family:var(--serif); font-size:1.2rem; color:#fff; margin-bottom:0.5rem; }
+    .es-sub { font-size:0.75rem; color:var(--muted); margin-bottom:1.2rem; }
+    .es-form { display:flex; max-width:400px; margin:0 auto; }
+    .es-input { flex:1; background:var(--bg); border:1px solid var(--border); border-right:none; color:var(--text); font-family:var(--mono); font-size:0.82rem; padding:0.7rem 1rem; outline:none; }
+    .es-input:focus { border-color:var(--accent); }
+    .es-btn { background:var(--accent); color:var(--bg); border:none; padding:0.7rem 1.2rem; font-family:var(--mono); font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; white-space:nowrap; }
+    .es-success { display:none; color:var(--accent); font-size:0.82rem; margin-top:0.8rem; }
+    footer { max-width:720px; margin:0 auto; padding:2rem 2.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; font-size:0.65rem; color:var(--dim); }
+    footer a { color:var(--accent); text-decoration:none; }
+  </style>
+</head>
+<body>
+<nav class="z1">
+  <a href="index.html" class="nav-brand"><div class="nav-dot"></div><span class="nav-name">endoflife<span>.ai</span></span></a>
+  <a href="index.html#resources" class="nav-back">← Resource Hub</a>
+</nav>
+<div class="wrap z1">
+  <div class="article-cat">Open Source</div>
+  <h1 class="article-title">The 2026 EOL Calendar: Every Major Runtime and Framework</h1>
+  <p class="article-excerpt">Python, Node.js, PHP, Ruby, Java LTS — every major platform support window in one place, updated quarterly.</p>
+  <div class="article-meta">
+    <span>May 2026</span><div class="meta-dot"></div><span>5 min read</span><div class="meta-dot"></div><span>Open Source</span>
+  </div>
+  <div class="article-body">
+    <p>Software lifecycle calendars are scattered across vendor documentation pages, GitHub wikis, and community-maintained spreadsheets. This article consolidates the most critical end-of-life dates for the runtimes and frameworks that power the majority of production applications — current as of May 2026.</p>
+    <p>Use this as a quarterly reference. Bookmark it. Share it with your team. The dates below represent the last day each version receives security patches. After that date, disclosed vulnerabilities go unpatched indefinitely.</p>
+
+    <h2>Python</h2>
+    <p>Python follows an annual release cycle with roughly five years of support per version. The PSF is disciplined about EOL enforcement — when a version drops off, it drops off completely.</p>
+    <table class="eol-table">
+      <tr><th>Version</th><th>EOL Date</th><th>Status</th></tr>
+      <tr><td class="name">Python 3.8</td><td>Oct 2024</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Python 3.9</td><td>Oct 2025</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Python 3.10</td><td>Oct 2026</td><td class="status-warn">EOL in 5 months</td></tr>
+      <tr><td class="name">Python 3.11</td><td>Oct 2027</td><td class="status-active">Active</td></tr>
+      <tr><td class="name">Python 3.12</td><td>Oct 2028</td><td class="status-active">Active</td></tr>
+      <tr><td class="name">Python 3.13</td><td>Oct 2029</td><td class="status-active">Active — Latest</td></tr>
+    </table>
+    <p><strong>Action required:</strong> Any production application running Python 3.9 or earlier is on EOL code. Python 3.10 teams should begin migration planning now — five months is not much runway for a runtime upgrade.</p>
+
+    <h2>Node.js</h2>
+    <p>Node.js releases even-numbered versions as LTS (Long Term Support). Odd-numbered versions are Current releases with shorter support windows. Only run LTS in production.</p>
+    <table class="eol-table">
+      <tr><th>Version</th><th>EOL Date</th><th>Status</th></tr>
+      <tr><td class="name">Node.js 16</td><td>Sep 2023</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Node.js 18</td><td>Apr 2025</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Node.js 20</td><td>Apr 2026</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Node.js 22</td><td>Apr 2027</td><td class="status-active">Active LTS</td></tr>
+      <tr><td class="name">Node.js 24</td><td>Apr 2028</td><td class="status-active">Active — Latest LTS</td></tr>
+    </table>
+    <p><strong>Action required:</strong> Node.js 20 reached EOL in April 2026. If your applications are running Node 20 or earlier, upgrade to Node 22 or 24 immediately.</p>
+
+    <h2>PHP</h2>
+    <p>PHP has a two-year active support window followed by one year of security-only fixes. The community tends to be slow at migrating major versions, which creates persistent EOL exposure across the ecosystem.</p>
+    <table class="eol-table">
+      <tr><th>Version</th><th>EOL Date</th><th>Status</th></tr>
+      <tr><td class="name">PHP 7.4</td><td>Nov 2022</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">PHP 8.0</td><td>Nov 2023</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">PHP 8.1</td><td>Dec 2025</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">PHP 8.2</td><td>Dec 2026</td><td class="status-warn">EOL in 7 months</td></tr>
+      <tr><td class="name">PHP 8.3</td><td>Dec 2027</td><td class="status-active">Active</td></tr>
+      <tr><td class="name">PHP 8.4</td><td>Dec 2028</td><td class="status-active">Active — Latest</td></tr>
+    </table>
+    <p><strong>Action required:</strong> Any PHP 8.1 or earlier application is running on EOL code. PHP 8.2 teams should plan migration to 8.3 or 8.4 before year-end.</p>
+
+    <h2>Java LTS Releases</h2>
+    <p>Java LTS release support varies significantly by vendor. Oracle's free support for OpenJDK LTS builds is limited; vendors like Amazon Corretto, Eclipse Temurin, and Microsoft OpenJDK offer longer free support windows. The dates below reflect Oracle OpenJDK community support.</p>
+    <table class="eol-table">
+      <tr><th>Version</th><th>Oracle EOL</th><th>Status</th></tr>
+      <tr><td class="name">Java 8</td><td>Mar 2025 (free)</td><td class="status-warn">Commercial support only</td></tr>
+      <tr><td class="name">Java 11</td><td>Sep 2023 (free)</td><td class="status-eol">EOL (Oracle free)</td></tr>
+      <tr><td class="name">Java 17</td><td>Sep 2026</td><td class="status-warn">EOL in 4 months</td></tr>
+      <tr><td class="name">Java 21</td><td>Sep 2028</td><td class="status-active">Active LTS</td></tr>
+      <tr><td class="name">Java 25</td><td>Sep 2030</td><td class="status-active">Active — Latest LTS</td></tr>
+    </table>
+    <p><strong>Action required:</strong> Java 17 reaches Oracle EOL in September 2026. Teams running Java 11 or earlier on Oracle OpenJDK should migrate to Java 21 or switch to a vendor distribution with longer free support.</p>
+
+    <h2>Ruby</h2>
+    <table class="eol-table">
+      <tr><th>Version</th><th>EOL Date</th><th>Status</th></tr>
+      <tr><td class="name">Ruby 3.0</td><td>Mar 2024</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Ruby 3.1</td><td>Mar 2025</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Ruby 3.2</td><td>Mar 2026</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Ruby 3.3</td><td>Mar 2027</td><td class="status-active">Active</td></tr>
+      <tr><td class="name">Ruby 3.4</td><td>Mar 2028</td><td class="status-active">Active — Latest</td></tr>
+    </table>
+
+    <h2>Databases</h2>
+    <table class="eol-table">
+      <tr><th>Product</th><th>EOL Date</th><th>Status</th></tr>
+      <tr><td class="name">MySQL 5.7</td><td>Oct 2023</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">MySQL 8.0</td><td>Apr 2026</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">MySQL 8.4</td><td>Apr 2032</td><td class="status-active">Active LTS</td></tr>
+      <tr><td class="name">PostgreSQL 14</td><td>Nov 2026</td><td class="status-warn">EOL in 6 months</td></tr>
+      <tr><td class="name">PostgreSQL 15</td><td>Nov 2027</td><td class="status-active">Active</td></tr>
+      <tr><td class="name">PostgreSQL 16</td><td>Nov 2028</td><td class="status-active">Active</td></tr>
+      <tr><td class="name">Redis 6.x</td><td>Mar 2024</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Redis 7.0</td><td>Jul 2025</td><td class="status-eol">End of Life</td></tr>
+      <tr><td class="name">Redis 7.2</td><td>Jul 2026</td><td class="status-warn">EOL in 2 months</td></tr>
+    </table>
+
+    <div class="callout">
+      <strong>Note on Redis:</strong> Redis 7.4+ moved to a dual-license model (RSALv2/SSPLv1). For teams requiring open-source licensing, Valkey is the community fork maintaining Apache 2.0 licensing with active development.
+    </div>
+
+    <h2>How to Use This Calendar</h2>
+    <p>Cross-reference this list against your production stack. For every version that is EOL or approaching EOL within six months, create a tracked ticket with an owner and a deadline. Don't leave it as a note in a document — it needs to be in your issue tracker, assigned to a team, with a date.</p>
+    <p>For versions approaching EOL, check your vendor's migration guide before the deadline. Major version upgrades — Python 3.9 to 3.13, Node 20 to 24, PHP 8.1 to 8.4 — occasionally include breaking changes that require code updates. Six months is enough runway if you start now. Two months is not.</p>
+
+    <div class="divider"></div>
+    <p>This calendar is updated quarterly. For real-time EOL status on any of these products, use the <a href="checker.html">EOL Checker</a> — it pulls live data from endoflife.date and surfaces CVE blind spot warnings for products past their support window.</p>
+  </div>
+
+  <a href="article-ai-eol-care.html" class="next-article z1">
+    <div><div class="na-label">Next Article</div><div class="na-title">How AI Is Transforming End-of-Life Care Planning in 2026</div></div>
+    <div class="na-arrow">→</div>
+  </a>
+  <div class="email-strip z1">
+    <div class="es-title">The monthly EOL digest</div>
+    <p class="es-sub">Once a month — critical end-of-life dates, CVE blind spots, and lifecycle changes worth knowing about.</p>
+    <div class="es-form" id="esForm">
+      <input type="email" class="es-input" id="esInput" placeholder="you@company.com"/>
+      <button class="es-btn" onclick="esSubmit()">Subscribe →</button>
+    </div>
+    <div class="es-success" id="esSuccess">You're on the list.</div>
+  </div>
+</div>
+<footer class="z1"><span>© 2026 endoflife.ai</span><a href="index.html">← Back to Platform</a></footer>
+<script>
+async function esSubmit() {
+  const email = document.getElementById('esInput').value.trim();
+  if (!email || !email.includes('@')) return;
+  try { await fetch('https://api.beehiiv.com/v2/publications/pub_d4d2b728-6bf7-421b-b887-6751e8dce7fe/subscriptions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,reactivate_existing:true,send_welcome_email:true})}); } catch(e) {}
+  document.getElementById('esForm').style.display='none';
+  document.getElementById('esSuccess').style.display='block';
+}
+document.getElementById('esInput').addEventListener('keydown',e=>{if(e.key==='Enter')esSubmit();});
+</script>
+</body>
+</html>

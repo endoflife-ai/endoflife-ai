@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EOSL for Enterprise Hardware: Cisco, HPE, Dell EMC Timelines — endoflife.ai</title>
+  <meta name="description" content="When your storage arrays and network gear hit end-of-service-life, the security clock starts. A vendor-by-vendor breakdown of critical dates."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#08090c; --surface:#0f1117; --surface2:#171c26; --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12); --text:#e2e8f0; --muted:#64748b; --dim:#374151; --accent:#4ade80; --accent2:#f59e0b; --red:#f87171; --blue:#60a5fa; --serif:'Instrument Serif',Georgia,serif; --mono:'Geist Mono',monospace; }
+    html { scroll-behavior: smooth; }
+    body { background:var(--bg); color:var(--text); font-family:var(--mono); font-size:13px; line-height:1.6; min-height:100vh; }
+    body::before { content:''; position:fixed; inset:0; background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px); background-size:28px 28px; pointer-events:none; z-index:0; }
+    body::after { content:''; position:fixed; top:-20%; left:50%; transform:translateX(-50%); width:800px; height:400px; background:radial-gradient(ellipse,rgba(74,222,128,0.04) 0%,transparent 70%); pointer-events:none; z-index:0; }
+    .z1 { position:relative; z-index:1; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:0 2.5rem; height:58px; background:rgba(8,9,12,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+    .nav-brand { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+    .nav-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); animation:breathe 3s ease-in-out infinite; }
+    @keyframes breathe { 0%,100%{opacity:1;box-shadow:0 0 10px var(--accent)} 50%{opacity:0.5;box-shadow:0 0 4px var(--accent)} }
+    .nav-name { font-size:0.78rem; font-weight:500; letter-spacing:0.05em; color:var(--text); }
+    .nav-name span { color:var(--accent); }
+    .nav-back { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--text); }
+    .wrap { max-width:720px; margin:0 auto; padding:9rem 2.5rem 6rem; }
+    .article-cat { font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); display:inline-flex; align-items:center; gap:0.6rem; margin-bottom:1.5rem; padding:0.3rem 0.8rem; border:1px solid rgba(74,222,128,0.2); background:rgba(74,222,128,0.05); }
+    .article-title { font-family:var(--serif); font-size:clamp(2rem,4vw,3rem); color:#fff; line-height:1.1; margin-bottom:1.2rem; letter-spacing:-0.02em; }
+    .article-excerpt { font-size:0.95rem; color:var(--muted); line-height:1.85; max-width:600px; margin-bottom:2rem; }
+    .article-meta { display:flex; align-items:center; gap:1.5rem; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); padding-bottom:2rem; border-bottom:1px solid var(--border); margin-bottom:3rem; }
+    .meta-dot { width:3px; height:3px; border-radius:50%; background:var(--dim); }
+    .article-body { font-size:0.88rem; line-height:1.9; color:var(--text); }
+    .article-body h2 { font-family:var(--serif); font-size:1.5rem; color:#fff; margin:3rem 0 1rem; line-height:1.2; }
+    .article-body h3 { font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin:2rem 0 0.8rem; }
+    .article-body p { margin-bottom:1.4rem; }
+    .article-body strong { color:#fff; font-weight:500; }
+    .article-body em { font-style:italic; color:var(--accent2); }
+    .callout { background:var(--surface); border-left:2px solid var(--accent); padding:1.2rem 1.5rem; margin:2rem 0; font-size:0.85rem; color:var(--muted); line-height:1.8; }
+    .callout strong { color:var(--accent); }
+    .callout-red { border-left-color:var(--red); }
+    .callout-red strong { color:var(--red); }
+    .eol-table { width:100%; border-collapse:collapse; margin:2rem 0; font-size:0.78rem; }
+    .eol-table th { font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--dim); padding:0.6rem 1rem; text-align:left; border-bottom:1px solid var(--border); }
+    .eol-table td { padding:0.75rem 1rem; border-bottom:1px solid var(--border); color:var(--muted); }
+    .eol-table tr:hover td { background:var(--surface); }
+    .eol-table .name { color:var(--text); font-weight:500; }
+    .status-eol { color:var(--red); }
+    .status-warn { color:var(--accent2); }
+    .status-active { color:var(--accent); }
+    .divider { height:1px; background:var(--border); margin:3rem 0; }
+    .back-link { background:var(--surface); border:1px solid var(--border); padding:1.5rem; margin-top:4rem; display:flex; justify-content:space-between; align-items:center; text-decoration:none; transition:border-color 0.2s; }
+    .back-link:hover { border-color:var(--border2); }
+    .na-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--dim); margin-bottom:0.4rem; }
+    .na-title { font-size:0.85rem; color:var(--text); }
+    .na-arrow { color:var(--accent); font-size:1.2rem; flex-shrink:0; }
+    .email-strip { background:var(--surface); border:1px solid var(--border); padding:2rem; margin-top:3rem; text-align:center; }
+    .es-title { font-family:var(--serif); font-size:1.2rem; color:#fff; margin-bottom:0.5rem; }
+    .es-sub { font-size:0.75rem; color:var(--muted); margin-bottom:1.2rem; }
+    .es-form { display:flex; max-width:400px; margin:0 auto; }
+    .es-input { flex:1; background:var(--bg); border:1px solid var(--border); border-right:none; color:var(--text); font-family:var(--mono); font-size:0.82rem; padding:0.7rem 1rem; outline:none; }
+    .es-input:focus { border-color:var(--accent); }
+    .es-btn { background:var(--accent); color:var(--bg); border:none; padding:0.7rem 1.2rem; font-family:var(--mono); font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; white-space:nowrap; }
+    .es-success { display:none; color:var(--accent); font-size:0.82rem; margin-top:0.8rem; }
+    footer { max-width:720px; margin:0 auto; padding:2rem 2.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; font-size:0.65rem; color:var(--dim); }
+    footer a { color:var(--accent); text-decoration:none; }
+  </style>
+</head>
+<body>
+<nav class="z1">
+  <a href="index.html" class="nav-brand"><div class="nav-dot"></div><span class="nav-name">endoflife<span>.ai</span></span></a>
+  <a href="index.html#resources" class="nav-back">← Resource Hub</a>
+</nav>
+<div class="wrap z1">
+  <div class="article-cat">Hardware</div>
+  <h1 class="article-title">EOSL for Enterprise Hardware: Cisco, HPE, Dell EMC Timelines</h1>
+  <p class="article-excerpt">When your storage arrays and network gear hit end-of-service-life, the security clock starts. A vendor-by-vendor breakdown of critical dates.</p>
+  <div class="article-meta">
+    <span>Apr 2026</span><div class="meta-dot"></div><span>7 min read</span><div class="meta-dot"></div><span>Hardware</span>
+  </div>
+  <div class="article-body">
+    <p>Software end-of-life gets most of the attention in security conversations. Hardware end-of-service-life is quieter — but the consequences are just as serious, and the lead times for remediation are significantly longer. You can upgrade a runtime in weeks. Replacing core network infrastructure takes quarters.</p>
+    <p>EOSL — end of service life — is the point at which a hardware vendor stops providing software updates, security patches, and technical support for a product. The hardware doesn't stop working. The firmware does stop getting patched. And firmware vulnerabilities in network gear and storage arrays are among the most dangerous in any environment — they sit below the OS, often outside the reach of standard vulnerability scanners, and provide attackers with persistent, privileged access.</p>
+
+    <h2>Understanding the Hardware Lifecycle</h2>
+    <p>Enterprise hardware vendors typically structure support into distinct phases. Knowing which phase your equipment is in determines what coverage you actually have.</p>
+    <p><strong>End of Sale (EoS):</strong> The vendor stops selling the product. New purchases are unavailable. Existing units continue to receive full support. This is the first lifecycle warning — hardware approaching EoS should be flagged for eventual replacement planning.</p>
+    <p><strong>End of Software Maintenance (EoSM):</strong> Security patches and software updates stop. This is the critical threshold — firmware vulnerabilities disclosed after this date will not be patched. Hardware past EoSM is functionally equivalent to EOL software: known vulnerabilities accumulate indefinitely.</p>
+    <p><strong>End of Service Life (EOSL):</strong> All support ends. No patches, no TAC support, no hardware replacement under contract. At this point the vendor relationship is over entirely.</p>
+
+    <div class="callout callout-red">
+      <strong>The scanner blind spot is worse for hardware.</strong> Most vulnerability scanners are optimized for OS and application-layer CVEs. Firmware vulnerabilities in network gear frequently go undetected by standard scanning — they require specialized tools and often vendor-specific security advisories to surface.
+    </div>
+
+    <h2>Cisco</h2>
+    <p>Cisco publishes detailed lifecycle dates through its Product Lifecycle Support page. Their end-of-life policy provides a minimum of one year between EoS announcement and EoS date, with software maintenance typically continuing for three to five years post-EoS.</p>
+
+    <h3>Cisco Catalyst Switching</h3>
+    <table class="eol-table">
+      <tr><th>Platform</th><th>End of Sale</th><th>End of SW Maintenance</th><th>EOSL</th></tr>
+      <tr><td class="name">Catalyst 2960-X</td><td>Jan 2023</td><td class="status-eol">Jan 2025</td><td>Jan 2028</td></tr>
+      <tr><td class="name">Catalyst 3650</td><td>Oct 2020</td><td class="status-eol">Oct 2022</td><td>Oct 2025</td></tr>
+      <tr><td class="name">Catalyst 3850</td><td>Oct 2020</td><td class="status-eol">Oct 2022</td><td>Oct 2025</td></tr>
+      <tr><td class="name">Catalyst 9200</td><td>Active</td><td class="status-active">Active</td><td>TBD</td></tr>
+      <tr><td class="name">Catalyst 9300</td><td>Active</td><td class="status-active">Active</td><td>TBD</td></tr>
+    </table>
+
+    <h3>Cisco ASA Firewall</h3>
+    <table class="eol-table">
+      <tr><th>Platform</th><th>End of Sale</th><th>End of SW Maintenance</th><th>EOSL</th></tr>
+      <tr><td class="name">ASA 5505</td><td>Aug 2017</td><td class="status-eol">Aug 2019</td><td>Aug 2022</td></tr>
+      <tr><td class="name">ASA 5510/5520/5540</td><td>Aug 2017</td><td class="status-eol">Aug 2019</td><td>Aug 2022</td></tr>
+      <tr><td class="name">ASA 5508-X / 5516-X</td><td>Aug 2022</td><td class="status-eol">Aug 2024</td><td>Aug 2027</td></tr>
+      <tr><td class="name">Firepower 1000/2100</td><td>Active</td><td class="status-active">Active</td><td>TBD</td></tr>
+    </table>
+
+    <p><strong>Action required:</strong> Catalyst 3650/3850 and ASA 5500-series devices past End of Software Maintenance are accumulating unpatched firmware CVEs. These are common platforms in mid-market enterprise environments and frequently missed in EOL audits because the hardware is still functioning normally.</p>
+
+    <h2>HPE</h2>
+    <p>HPE's lifecycle policy varies by product line. ProLiant servers receive a minimum of five years of support from general availability. Networking products (Aruba) follow separate lifecycle schedules.</p>
+
+    <h3>HPE ProLiant Servers</h3>
+    <table class="eol-table">
+      <tr><th>Platform</th><th>Gen</th><th>End of Support</th><th>Status</th></tr>
+      <tr><td class="name">ProLiant DL360</td><td>Gen 9</td><td class="status-eol">Jan 2024</td><td class="status-eol">End of Support</td></tr>
+      <tr><td class="name">ProLiant DL380</td><td>Gen 9</td><td class="status-eol">Jan 2024</td><td class="status-eol">End of Support</td></tr>
+      <tr><td class="name">ProLiant DL360</td><td>Gen 10</td><td>Feb 2028</td><td class="status-active">Active</td></tr>
+      <tr><td class="name">ProLiant DL380</td><td>Gen 10</td><td>Feb 2028</td><td class="status-active">Active</td></tr>
+      <tr><td class="name">ProLiant DL360</td><td>Gen 11</td><td>2030+</td><td class="status-active">Active — Current</td></tr>
+    </table>
+
+    <p>HPE Gen 9 servers reached end of support in early 2024. iLO (Integrated Lights-Out) firmware on Gen 9 platforms is no longer patched — iLO vulnerabilities have historically been severe, including remote code execution without authentication. Any Gen 9 server with internet-accessible iLO is an unacceptable risk.</p>
+
+    <h2>Dell EMC / Dell Technologies</h2>
+    <p>Dell's PowerEdge server line and PowerStore/PowerVault storage platforms follow a lifecycle with ProSupport coverage typically available for five to seven years post-release.</p>
+
+    <h3>Dell PowerEdge Servers</h3>
+    <table class="eol-table">
+      <tr><th>Platform</th><th>End of Service Life</th><th>Status</th></tr>
+      <tr><td class="name">PowerEdge 13G (R630/R730)</td><td class="status-eol">Oct 2023</td><td class="status-eol">EOSL</td></tr>
+      <tr><td class="name">PowerEdge 14G (R640/R740)</td><td>Jan 2027</td><td class="status-warn">Active — plan replacement</td></tr>
+      <tr><td class="name">PowerEdge 15G (R650/R750)</td><td>2029+</td><td class="status-active">Active</td></tr>
+      <tr><td class="name">PowerEdge 16G (R660/R760)</td><td>2031+</td><td class="status-active">Active — Current</td></tr>
+    </table>
+
+    <h3>Dell EMC Storage</h3>
+    <table class="eol-table">
+      <tr><th>Platform</th><th>End of Service Life</th><th>Status</th></tr>
+      <tr><td class="name">VNX/VNX2 Series</td><td class="status-eol">Dec 2023</td><td class="status-eol">EOSL</td></tr>
+      <tr><td class="name">Unity 300/400/500</td><td class="status-warn">Dec 2026</td><td class="status-warn">EOL in 7 months</td></tr>
+      <tr><td class="name">PowerStore 500/1000/3000</td><td>2030+</td><td class="status-active">Active</td></tr>
+    </table>
+
+    <p><strong>Action required:</strong> VNX/VNX2 storage arrays at EOSL are a significant risk in environments that haven't migrated. These platforms manage storage for multiple systems — a firmware compromise can affect every workload they serve. Dell 14G servers approaching 2027 EOSL should be in replacement planning now given typical procurement and migration timelines.</p>
+
+    <h2>Third-Party Maintenance: The Trade-offs</h2>
+    <p>A common response to hardware EOSL is third-party maintenance (TPM) contracts — companies like Curvature, Park Place Technologies, and Centrilogic that provide hardware support after the vendor stops. TPM can significantly reduce hardware support costs and extend the functional life of equipment.</p>
+    <p>What TPM cannot provide is firmware security patches. Third-party maintainers keep hardware running. They cannot patch iLO vulnerabilities, switch firmware flaws, or storage controller CVEs — only the OEM can do that, and after EOSL, the OEM won't. TPM is a valid operational strategy. It is not a security strategy.</p>
+
+    <div class="callout">
+      <strong>The right framing:</strong> TPM buys time for planned replacement. It does not reduce firmware CVE exposure. Organizations using TPM on EOSL hardware should treat those systems with the same compensating controls applied to EOL software: network segmentation, restricted management access, enhanced monitoring, and a documented replacement timeline.
+    </div>
+
+    <h2>Building Your Hardware EOL Inventory</h2>
+    <p>Most organizations have better visibility into their software stack than their hardware lifecycle status. Physical assets age quietly — the switch in the wiring closet doesn't send a pop-up notification when it crosses into End of Software Maintenance.</p>
+    <p>The starting point is a complete hardware inventory with firmware versions and purchase dates. Cross-reference against vendor lifecycle databases — Cisco's Product Lifecycle Support, HPE's End of Life portal, and Dell's Product Lifecycle page are all publicly accessible. Flag everything past End of Software Maintenance for immediate review and everything within 18 months of End of Software Maintenance for replacement planning.</p>
+    <p>Pay particular attention to out-of-band management interfaces: Cisco's IOS-XE management plane, HPE iLO, Dell iDRAC, and equivalent platforms on other vendors. These interfaces are high-value targets — they provide remote access to hardware below the OS level — and their firmware vulnerabilities are frequently severe. Management interfaces on EOSL hardware with no patch path should be isolated from all external network access without exception.</p>
+
+    <div class="divider"></div>
+    <p>Hardware EOSL is a longer cycle than software EOL, which makes it easier to deprioritize. A procurement decision made in 2019 creates a security problem in 2024 — the gap between cause and consequence is long enough that the connection gets lost. The organizations that manage hardware lifecycle proactively, with planned replacement cycles tied to vendor EOSL dates, avoid the crisis of discovering that critical infrastructure is running on unpatched firmware with no remediation path. Start the inventory. The replacement timelines are long enough that early discovery is the only kind that helps.</p>
+  </div>
+
+  <a href="index.html#resources" class="back-link z1">
+    <div><div class="na-label">Resource Hub</div><div class="na-title">Browse all articles and guides</div></div>
+    <div class="na-arrow">→</div>
+  </a>
+  <div class="email-strip z1">
+    <div class="es-title">The monthly EOL digest</div>
+    <p class="es-sub">Once a month — critical end-of-life dates, CVE blind spots, and lifecycle changes worth knowing about.</p>
+    <div class="es-form" id="esForm">
+      <input type="email" class="es-input" id="esInput" placeholder="you@company.com"/>
+      <button class="es-btn" onclick="esSubmit()">Subscribe →</button>
+    </div>
+    <div class="es-success" id="esSuccess">You're on the list.</div>
+  </div>
+</div>
+<footer class="z1"><span>© 2026 endoflife.ai</span><a href="index.html">← Back to Platform</a></footer>
+<script>
+async function esSubmit() {
+  const email = document.getElementById('esInput').value.trim();
+  if (!email || !email.includes('@')) return;
+  try { await fetch('https://api.beehiiv.com/v2/publications/pub_d4d2b728-6bf7-421b-b887-6751e8dce7fe/subscriptions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,reactivate_existing:true,send_welcome_email:true})}); } catch(e) {}
+  document.getElementById('esForm').style.display='none';
+  document.getElementById('esSuccess').style.display='block';
+}
+document.getElementById('esInput').addEventListener('keydown',e=>{if(e.key==='Enter')esSubmit();});
+</script>
+</body>
+</html>

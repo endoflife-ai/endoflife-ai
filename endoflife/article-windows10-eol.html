@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Windows 10 End of Life: The Complete Migration Guide for IT Teams — endoflife.ai</title>
+  <meta name="description" content="Windows 10 reached EOL October 14, 2025. Millions of enterprise machines are running unpatched. Here is what you need to do now."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#08090c; --surface:#0f1117; --surface2:#171c26; --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12); --text:#e2e8f0; --muted:#64748b; --dim:#374151; --accent:#4ade80; --accent2:#f59e0b; --red:#f87171; --blue:#60a5fa; --serif:'Instrument Serif',Georgia,serif; --mono:'Geist Mono',monospace; }
+    html { scroll-behavior: smooth; }
+    body { background:var(--bg); color:var(--text); font-family:var(--mono); font-size:13px; line-height:1.6; min-height:100vh; }
+    body::before { content:''; position:fixed; inset:0; background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px); background-size:28px 28px; pointer-events:none; z-index:0; }
+    body::after { content:''; position:fixed; top:-20%; left:50%; transform:translateX(-50%); width:800px; height:400px; background:radial-gradient(ellipse,rgba(74,222,128,0.04) 0%,transparent 70%); pointer-events:none; z-index:0; }
+    .z1 { position:relative; z-index:1; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:0 2.5rem; height:58px; background:rgba(8,9,12,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+    .nav-brand { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+    .nav-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); animation:breathe 3s ease-in-out infinite; }
+    @keyframes breathe { 0%,100%{opacity:1;box-shadow:0 0 10px var(--accent)} 50%{opacity:0.5;box-shadow:0 0 4px var(--accent)} }
+    .nav-name { font-size:0.78rem; font-weight:500; letter-spacing:0.05em; color:var(--text); }
+    .nav-name span { color:var(--accent); }
+    .nav-back { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:var(--text); }
+    .wrap { max-width:720px; margin:0 auto; padding:9rem 2.5rem 6rem; }
+    .article-cat { font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); display:inline-flex; align-items:center; gap:0.6rem; margin-bottom:1.5rem; padding:0.3rem 0.8rem; border:1px solid rgba(74,222,128,0.2); background:rgba(74,222,128,0.05); }
+    .article-title { font-family:var(--serif); font-size:clamp(2rem,4vw,3rem); color:#fff; line-height:1.1; margin-bottom:1.2rem; letter-spacing:-0.02em; }
+    .article-excerpt { font-size:0.95rem; color:var(--muted); line-height:1.85; max-width:600px; margin-bottom:2rem; }
+    .article-meta { display:flex; align-items:center; gap:1.5rem; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); padding-bottom:2rem; border-bottom:1px solid var(--border); margin-bottom:3rem; }
+    .meta-dot { width:3px; height:3px; border-radius:50%; background:var(--dim); }
+    .article-body { font-size:0.88rem; line-height:1.9; color:var(--text); }
+    .article-body h2 { font-family:var(--serif); font-size:1.5rem; color:#fff; margin:3rem 0 1rem; line-height:1.2; }
+    .article-body h3 { font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin:2rem 0 0.8rem; }
+    .article-body p { margin-bottom:1.4rem; }
+    .article-body strong { color:#fff; font-weight:500; }
+    .article-body em { font-style:italic; color:var(--accent2); }
+    .article-body a { color:var(--accent); text-decoration:none; border-bottom:1px solid rgba(74,222,128,0.3); }
+    .article-body a:hover { border-bottom-color:var(--accent); }
+    .callout { background:var(--surface); border-left:2px solid var(--accent); padding:1.2rem 1.5rem; margin:2rem 0; font-size:0.85rem; color:var(--muted); line-height:1.8; }
+    .callout strong { color:var(--accent); }
+    .callout-red { border-left-color:var(--red); }
+    .callout-red strong { color:var(--red); }
+    .callout-yellow { border-left-color:var(--accent2); }
+    .callout-yellow strong { color:var(--accent2); }
+    .step-block { background:var(--surface); border:1px solid var(--border); padding:1.5rem; margin:1rem 0; }
+    .step-num { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--dim); margin-bottom:0.5rem; }
+    .step-title { font-size:0.9rem; color:#fff; font-weight:500; margin-bottom:0.5rem; }
+    .step-text { font-size:0.8rem; color:var(--muted); line-height:1.8; }
+    .divider { height:1px; background:var(--border); margin:3rem 0; }
+    .next-article { background:var(--surface); border:1px solid var(--border); padding:1.5rem; margin-top:4rem; display:flex; justify-content:space-between; align-items:center; text-decoration:none; transition:border-color 0.2s; }
+    .next-article:hover { border-color:var(--border2); }
+    .na-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--dim); margin-bottom:0.4rem; }
+    .na-title { font-size:0.85rem; color:var(--text); }
+    .na-arrow { color:var(--accent); font-size:1.2rem; flex-shrink:0; }
+    .email-strip { background:var(--surface); border:1px solid var(--border); padding:2rem; margin-top:3rem; text-align:center; }
+    .es-title { font-family:var(--serif); font-size:1.2rem; color:#fff; margin-bottom:0.5rem; }
+    .es-sub { font-size:0.75rem; color:var(--muted); margin-bottom:1.2rem; }
+    .es-form { display:flex; max-width:400px; margin:0 auto; }
+    .es-input { flex:1; background:var(--bg); border:1px solid var(--border); border-right:none; color:var(--text); font-family:var(--mono); font-size:0.82rem; padding:0.7rem 1rem; outline:none; }
+    .es-input:focus { border-color:var(--accent); }
+    .es-btn { background:var(--accent); color:var(--bg); border:none; padding:0.7rem 1.2rem; font-family:var(--mono); font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; white-space:nowrap; }
+    .es-success { display:none; color:var(--accent); font-size:0.82rem; margin-top:0.8rem; }
+    footer { max-width:720px; margin:0 auto; padding:2rem 2.5rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; font-size:0.65rem; color:var(--dim); }
+    footer a { color:var(--accent); text-decoration:none; }
+  </style>
+</head>
+<body>
+<nav class="z1">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-dot"></div>
+    <span class="nav-name">endoflife<span>.ai</span></span>
+  </a>
+  <a href="index.html#resources" class="nav-back">← Resource Hub</a>
+</nav>
+<div class="wrap z1">
+  <div class="article-cat">IT Security</div>
+  <h1 class="article-title">Windows 10 End of Life: The Complete Migration Guide for IT Teams</h1>
+  <p class="article-excerpt">Windows 10 reached EOL October 14, 2025. Millions of enterprise machines are running unpatched. Here is what you need to do now.</p>
+  <div class="article-meta">
+    <span>Apr 2026</span><div class="meta-dot"></div><span>9 min read</span><div class="meta-dot"></div><span>IT Security</span>
+  </div>
+  <div class="article-body">
+    <p>On October 14, 2025, Microsoft ended support for Windows 10. No more security patches. No more bug fixes. No more updates of any kind. For the hundreds of millions of devices still running Windows 10 worldwide, the clock stopped — and the attack surface started growing.</p>
+    <p>Six months later, the migration picture remains grim. Enterprise IT teams are dealing with hardware compatibility walls, application certification backlogs, and budget constraints that make wholesale upgrades painful. But the security math is unforgiving: every day on Windows 10 is another day of unpatched exposure.</p>
+    <div class="callout callout-red"><strong>Critical:</strong> Windows 10 CVEs disclosed after October 14, 2025 will never be patched. Microsoft is actively patching Windows 11 for vulnerabilities that exist in both operating systems. Your Windows 10 machines are exposed to every one of those unaddressed flaws.</div>
+    <h2>Understanding the Scope</h2>
+    <p>Before you can migrate, you need to know what you're dealing with. Most organizations dramatically underestimate their Windows 10 footprint until they run a proper inventory. Shadow IT, remote workers' personal devices used for work, branch office machines, and legacy departmental systems all contribute to a count that's often 20–30% higher than IT's official records.</p>
+    <p>Run a discovery scan across your entire environment — not just managed endpoints. Include everything that touches your network. The output should give you a complete count of Windows 10 machines, their hardware specifications, their primary use cases, and the applications installed on each.</p>
+    <h2>The Hardware Problem</h2>
+    <p>Windows 11 has a hard requirement for TPM 2.0 and a compatible 64-bit processor. Many machines purchased between 2015 and 2019 fail this check — not because they're slow, but because they lack the security hardware Windows 11 requires.</p>
+    <p><strong>Replace the hardware.</strong> For machines that are four or more years old, replacement is often the right call economically. A new endpoint with a three-year lifecycle will cost less in the long run than extended security coverage for aging hardware.</p>
+    <p><strong>Purchase Extended Security Updates (ESU).</strong> Microsoft offers paid ESU coverage for Windows 10 through October 2028 — three years of continued security patches at a per-device annual cost. This is a bridge, not a destination, but it buys time for complex migrations.</p>
+    <p><strong>Move to Linux.</strong> For specific use cases — kiosk machines, single-purpose workstations, developer environments — Linux is a viable alternative that eliminates hardware replacement costs entirely.</p>
+    <h2>The Application Compatibility Problem</h2>
+    <p>Hardware is the first wall. Application compatibility is the second. Many enterprise applications were certified against Windows 10 and have not been re-tested against Windows 11. Some will work without modification. Some will require updates from the vendor. Some will break entirely.</p>
+    <div class="callout callout-yellow"><strong>Start here:</strong> Run the Windows 11 compatibility assessment tool via Microsoft Endpoint Manager or Intune against your endpoint fleet. It will flag known application compatibility issues before you begin migration.</div>
+    <p>For applications that fail compatibility testing, escalate to the vendor immediately. For legacy applications with no upgrade path, consider application virtualization — App-V, Citrix, or Azure Virtual Desktop — to isolate the incompatible application while migrating the underlying OS.</p>
+    <h2>Migration Strategy: Phased Approach</h2>
+    <div class="step-block">
+      <div class="step-num">Phase 01</div>
+      <div class="step-title">Inventory & Assessment (Weeks 1–3)</div>
+      <p class="step-text">Complete hardware and software inventory. Run Windows 11 readiness assessment. Categorize every endpoint: Ready to migrate, Needs hardware replacement, Needs application remediation, or ESU candidate.</p>
+    </div>
+    <div class="step-block">
+      <div class="step-num">Phase 02</div>
+      <div class="step-title">Pilot Group (Weeks 4–6)</div>
+      <p class="step-text">Select 50–100 technically tolerant users across different departments. Migrate this group to Windows 11. Document issues, build remediation playbooks, refine your deployment process before proceeding at scale.</p>
+    </div>
+    <div class="step-block">
+      <div class="step-num">Phase 03</div>
+      <div class="step-title">Wave Deployments (Weeks 7–20)</div>
+      <p class="step-text">Deploy in waves of 500–2,000 endpoints per week. Prioritize internet-facing machines and those handling sensitive data. Use Windows Autopilot or SCCM/Intune for automated deployment at scale.</p>
+    </div>
+    <div class="step-block">
+      <div class="step-num">Phase 04</div>
+      <div class="step-title">Long Tail Cleanup (Weeks 20+)</div>
+      <p class="step-text">Address remaining exceptions: hardware replacements, application remediations, ESU enrollments. Set a hard deadline for ESU cutover — ideally no later than Q1 2027.</p>
+    </div>
+    <h2>ESU: The Bridge Option</h2>
+    <p>Microsoft's Extended Security Updates program provides continued security patches for Windows 10 through October 14, 2028. Pricing increases annually. By year three, the cost of ESU coverage often exceeds the cost of new hardware. Treat ESU strictly as a bridge — every machine on it should have a documented migration date and owner.</p>
+    <h2>Communicating the Migration to End Users</h2>
+    <p>User communication is half the battle. Windows 11 is visually different from Windows 10, and end users who aren't prepared will generate support tickets at scale. Send migration notices at least two weeks before a user's scheduled migration. Plan for a 15–20% increase in helpdesk volume in the two weeks following each wave deployment.</p>
+    <h2>Measuring Success</h2>
+    <p>Track three metrics weekly: percentage of endpoints migrated to Windows 11, percentage enrolled in ESU as a bridge, and number of Windows 10 machines with zero coverage — neither migrated nor ESU-enrolled. That last number is your actual risk exposure. Drive it to zero.</p>
+    <div class="divider"></div>
+    <p>The Windows 10 EOL is not a future problem — it's a current one. Every unpatched Windows 10 machine in your environment is accumulating CVE exposure with no remediation path. Start the inventory today. Six months from now, you want to be looking at a largely Windows 11 fleet — not a growing stack of ESU invoices.</p>
+  </div>
+  <a href="article-eol-calendar-2026.html" class="next-article z1">
+    <div><div class="na-label">Next Article</div><div class="na-title">The 2026 EOL Calendar: Every Major Runtime and Framework</div></div>
+    <div class="na-arrow">→</div>
+  </a>
+  <div class="email-strip z1">
+    <div class="es-title">The monthly EOL digest</div>
+    <p class="es-sub">Once a month — critical end-of-life dates, CVE blind spots, and lifecycle changes worth knowing about.</p>
+    <div class="es-form" id="esForm">
+      <input type="email" class="es-input" id="esInput" placeholder="you@company.com"/>
+      <button class="es-btn" onclick="esSubmit()">Subscribe →</button>
+    </div>
+    <div class="es-success" id="esSuccess">You're on the list.</div>
+  </div>
+</div>
+<footer class="z1"><span>© 2026 endoflife.ai</span><a href="index.html">← Back to Platform</a></footer>
+<script>
+async function esSubmit() {
+  const email = document.getElementById('esInput').value.trim();
+  if (!email || !email.includes('@')) return;
+  try { await fetch('https://api.beehiiv.com/v2/publications/pub_d4d2b728-6bf7-421b-b887-6751e8dce7fe/subscriptions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,reactivate_existing:true,send_welcome_email:true})}); } catch(e) {}
+  document.getElementById('esForm').style.display='none';
+  document.getElementById('esSuccess').style.display='block';
+}
+document.getElementById('esInput').addEventListener('keydown',e=>{if(e.key==='Enter')esSubmit();});
+</script>
+</body>
+</html>
