@@ -1,6 +1,6 @@
 # endoflife.ai
 
-Software end-of-life dates, support status, EOL Risk Scores and CISA KEV exposure for **700+ products and 14,000+ versions**, each date labelled with its source (the vendor's own lifecycle page where we read it there, endoflife.date otherwise) and refreshed daily.
+Software end-of-life dates, support status, EOL Risk Scores and CISA KEV exposure for **700+ products and 15,000+ versions**, each date labelled with its source (the vendor's own lifecycle page where we read it there, endoflife.date otherwise) and refreshed daily.
 
 The site: **[endoflife.ai](https://endoflife.ai)** · the data, for programs: **[api.endoflife.ai](https://endoflife.ai/api)** · for AI agents: **[mcp.endoflife.ai](https://endoflife.ai/mcp)**
 
