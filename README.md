@@ -24,7 +24,7 @@ The full list, with install steps, is at [endoflife.ai/integrations](https://end
 
 ## Access
 
-A free API key (150 requests a day, no expiry) takes one email address at [endoflife.ai/api](https://endoflife.ai/api). Keyless access to the API ends on **November 16, 2026**; from then every data request needs a key. Badges, the OpenAPI spec and the hosted MCP server stay keyless.
+A free API key (150 requests a day, no expiry) takes one email address at [endoflife.ai/api](https://endoflife.ai/api). Every data request to the API needs a key (keyless access ended **November 16, 2026**). Badges, the OpenAPI spec and the hosted MCP server stay keyless.
 
 ## About
 
