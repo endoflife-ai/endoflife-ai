@@ -4,6 +4,8 @@ Software end-of-life dates, support status, EOL Risk Scores and CISA KEV exposur
 
 The site: **[endoflife.ai](https://endoflife.ai)** · the data, for programs: **[api.endoflife.ai](https://endoflife.ai/api)** · for AI agents: **[mcp.endoflife.ai](https://endoflife.ai/mcp)**
 
+Useful? Star the tools you use so other teams can find them.
+
 ## Use the data where you already work
 
 | Where | What it does | Repository / listing |
